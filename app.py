@@ -65,4 +65,6 @@ def paddocks():
     """List paddock details."""
     return render_template("paddocks.html")  
 
+if __name__ == "__main__":
+    app.run()
 
