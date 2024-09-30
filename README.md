@@ -63,7 +63,7 @@ database. (Relationships to other tables not required.)
 5. What changes would you need to make to other tables to incorporate the new farms
 table? (Describe the changes. SQL script not required.)
 
-    add a column 'farm_id' in table paddocks, the SQL script is as below:
+    add a column *`farm_id`* in table *`paddocks`*, the SQL script is as below:
 
     ```SQL
     ALTER TABLE paddocks ADD farm_id int NOT NULL;
