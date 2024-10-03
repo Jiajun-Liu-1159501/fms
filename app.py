@@ -1,12 +1,15 @@
-from flask import Flask
+from threading import Lock
+from flask import Flask, g
 from flask import render_template
 from flask import request
 from flask import redirect
 from flask import url_for
 from flask import session
 from datetime import date, datetime, timedelta
-import mysql.connector
-import connect
+import mysql.connector, connect
+from typing import Any, Dict, Generic, TypeVar, Callable
+from mysql.connector import pooling
+
 
 app = Flask(__name__)
 app.secret_key = 'COMP636 S2'
@@ -15,23 +18,39 @@ start_date = datetime(2024,10,29)
 pasture_growth_rate = 65    #kg DM/ha/day
 stock_consumption_rate = 14 #kg DM/animal/day
 
-db_connection = None
- 
-def getCursor():
-    """Gets a new dictionary cursor for the database.
-    If necessary, a new database connection is created here and used for all
-    subsequent to getCursor()."""
-    global db_connection
- 
-    if db_connection is None or not db_connection.is_connected():
-        db_connection = mysql.connector.connect(user=connect.dbuser, \
-            password=connect.dbpass, host=connect.dbhost,
-            database=connect.dbname, autocommit=True)
-       
-    cursor = db_connection.cursor(buffered=False)   # returns a list
-    # cursor = db_connection.cursor(dictionary=True, buffered=False)
-   
-    return cursor
+def _init_connection_pool() -> pooling.MySQLConnectionPool:
+    """
+    init database connection pool useing args in connect.py given,
+    using single database conection in mutiple thread web application is not thread safey
+    """
+    db_config: Dict[str, Any] = {
+        "host": connect.dbhost,
+        "port": connect.dbport,
+        "user": connect.dbuser,
+        "password": connect.dbpass,
+        "database": connect.dbname,
+        "autocommit": True
+    }
+    return pooling.MySQLConnectionPool(pool_name = "db_conn_pool", pool_size = 3, **db_config)
+
+connection_pool: pooling.MySQLConnectionPool = _init_connection_pool() #use pooled objects instead single connection instance
+
+@app.before_request
+def do_before() -> None:
+    """
+    bind a db session to a request thread using arg g befor handling
+    """
+    connection: pooling.PooledMySQLConnection = connection_pool.get_connection()
+    g.db_connection = connection
+
+@app.after_request
+def do_after(response) -> None:
+    """
+    return a db session to connection pool after request
+    """
+    connection: pooling.PooledMySQLConnection = g.db_connection
+    connection.close() # close method will return the connection to the pool, not closing a connection
+    return response
 
 @app.route("/")
 def home():
@@ -54,11 +73,11 @@ def reset_date():
 @app.route("/mobs")
 def mobs():
     """List the mob details (excludes the stock in each mob)."""
-    connection = getCursor()        
-    qstr = "select id, name from mobs;" 
-    connection.execute(qstr)        
+    connection: pooling.PooledMySQLConnection = g.db_connection
+    cursor = connection.cursor(dictionary = True, buffered = False)
+    cursor.execute("SELECT id, name FROM mobs;")        
     mobs = connection.fetchall()        
-    return render_template("mobs.html", mobs=mobs)  
+    return render_template("mobs.html", mobs = mobs)  
 
 @app.route("/paddocks")
 def paddocks():
