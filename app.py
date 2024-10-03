@@ -1,5 +1,7 @@
-from threading import Lock
-from flask import Flask, g
+from itertools import groupby
+from operator import itemgetter
+from turtle import st
+from flask import Flask, Response, g, jsonify
 from flask import render_template
 from flask import request
 from flask import redirect
@@ -7,7 +9,7 @@ from flask import url_for
 from flask import session
 from datetime import date, datetime, timedelta
 import mysql.connector, connect
-from typing import Any, Dict, Generic, TypeVar, Callable
+from typing import Any, Dict, Generic, List, TypeVar, Callable
 from mysql.connector import pooling, cursor
 
 
@@ -44,7 +46,7 @@ def do_before() -> None:
     g.db_connection = connection
 
 @app.after_request
-def do_after(response) -> None:
+def do_after(response: Response) -> None:
     """
     return a db session to connection pool after request
     """
@@ -60,29 +62,68 @@ def home():
 
 @app.route("/clear-date")
 def clear_date():
-    """Clear session['curr_date']. Removes 'curr_date' from session dictionary."""
+    """
+    Clear session['curr_date']. Removes 'curr_date' from session dictionary.
+    """
     session.pop('curr_date')
     return redirect(url_for('paddocks'))  
 
 @app.route("/reset-date")
 def reset_date():
-    """Reset session['curr_date'] to the project start_date value."""
+    """
+    Reset session['curr_date'] to the project start_date value.
+    """
     session.update({'curr_date': start_date})
     return redirect(url_for('paddocks'))  
 
-@app.route("/mobs")
-def mobs():
-    """List the mob details (excludes the stock in each mob)."""
-    connection: pooling.PooledMySQLConnection = g.db_connection
-    cur: cursor.MySQLCursor = connection.cursor(dictionary = True, buffered = False)
-    cur.execute("SELECT id, name FROM mobs;")        
-    mobs = cur.fetchall()        
-    return render_template("mobs.html", mobs = mobs)  
+@app.get("/mobs")
+def mobs() -> str:
+    """
+    List the mob details (excludes the stock in each mob).
+    """
+    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    query: str = "SELECT id, name FROM mobs ORDER BY name ASC;"
+    cur.execute(query)        
+    mobs: List[Dict[str, Any]] = cur.fetchall()        
+    return render_template("mobs.html", mobs = mobs)
 
-@app.route("/paddocks")
-def paddocks():
-    """List paddock details."""
-    return render_template("paddocks.html")  
+@app.get("/stocks")
+def stocks() -> str:
+    """
+    List the mob details (excludes the stock in each mob).
+    """
+    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    mob_query: str = "SELECT a.id as mob_id, a.name as mob_name, a.paddock_id, b.name as paddock_name, b.area, b.dm_per_ha, b.total_dm FROM mobs a LEFT JOIN paddocks b ON a.paddock_id = b.id ORDER BY a.name;"
+    cur.execute(mob_query)
+    mob_dict: List[Dict[str, Any]] = cur.fetchall()
+    stock_query: str = "SELECT * FROM stock ORDER BY id ASC;"
+    cur.execute(stock_query)
+    stock_dict: List[Dict[str, Any]] = cur.fetchall()
+    grouped_stocks: Dict[str, List[Dict[str, Any]]] = {}
+    for item in stock_dict:
+        grouped_stocks.setdefault(item.get("mob_id"), []).append(item)
+    for mob in mob_dict:
+        stocks = grouped_stocks.get(mob.get("mob_id"))
+        mob.setdefault("stocks", stocks)
+    return jsonify(mob_dict)
+
+@app.get("/paddocks")
+def paddocks() -> str:
+    """
+    List paddock details.
+    """
+    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    query: str = "SELECT a.*, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id ORDER BY a.name ASC;"
+    cur.execute(query)
+    paddocks: List[Dict[str. Any]] = cur.fetchall()
+    return render_template("paddocks.html", paddocks = paddocks)
+
+@app.post("/move")
+def move_paddocks() -> str:
+    """
+    move between different paddocks
+    """
+    
 
 if __name__ == "__main__":
     app.run()

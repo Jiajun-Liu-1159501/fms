@@ -17,13 +17,19 @@
 
     <section class="content">
       <header>
-        {% block header %}{% endblock %}
+        {% block header %}
+        {% endblock %}
       </header>
       {% for message in get_flashed_messages() %}
         <div class="flash">{{ message }}</div>
       {% endfor %}
-      {% block content %}{% endblock %}
+      {% block content %}
+      {% endblock %}
     </section>
+
+
+
+
     <!-- JavaScript Bundle with Popper -->
     <script> 
     // Example starter JavaScript for disabling form submissions if there are invalid fields
