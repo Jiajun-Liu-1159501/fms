@@ -8,7 +8,7 @@ from flask import session
 from datetime import date, datetime, timedelta
 import mysql.connector, connect
 from typing import Any, Dict, Generic, TypeVar, Callable
-from mysql.connector import pooling
+from mysql.connector import pooling, cursor
 
 
 app = Flask(__name__)
@@ -74,9 +74,9 @@ def reset_date():
 def mobs():
     """List the mob details (excludes the stock in each mob)."""
     connection: pooling.PooledMySQLConnection = g.db_connection
-    cursor = connection.cursor(dictionary = True, buffered = False)
-    cursor.execute("SELECT id, name FROM mobs;")        
-    mobs = connection.fetchall()        
+    cur: cursor.MySQLCursor = connection.cursor(dictionary = True, buffered = False)
+    cur.execute("SELECT id, name FROM mobs;")        
+    mobs = cur.fetchall()        
     return render_template("mobs.html", mobs = mobs)  
 
 @app.route("/paddocks")
