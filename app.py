@@ -84,7 +84,7 @@ def mobs() -> str:
     query: str = "SELECT a.id, a.name as mob_name, b.name as paddock_name FROM mobs a LEFT JOIN paddocks b on a.paddock_id = b.id ORDER BY a.name ASC;"
     cur.execute(query)        
     mobs: List[Dict[str, Any]] = cur.fetchall()   
-    data: Dict[str, Any] = {"page": "mob", "mobs": mobs}      
+    data: Dict[str, Any] = {"page": "mobs", "mobs": mobs}      
     return render_template("mobs.html", data = data)
 
 @app.get("/stocks")
@@ -116,7 +116,8 @@ def paddocks() -> str:
     query: str = "SELECT a.*, b.name as mob_name, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id ORDER BY a.name ASC;"
     cur.execute(query)
     paddocks: List[Dict[str. Any]] = cur.fetchall()
-    return jsonify(paddocks)
+    data: Dict[str, Any] = {"page": "paddocks", "paddocks": paddocks}
+    return render_template("paddocks.html", data = data)
 
 @app.post("/move",)
 def move_paddocks() -> str:

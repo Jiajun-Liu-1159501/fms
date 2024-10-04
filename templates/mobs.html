@@ -1,22 +1,28 @@
 {% extends "base.html" %}
 
-{% block title %}Mobs{% endblock %}
+{% block title %}FMS Mobs{% endblock %}
 
 {% block content %}
 
-<h2>Mobs</h2>
-
-    <table>   
-        <tr>
-            <th>Mob ID</th>
-            <th>Mob Name</th>
-        </tr>
+    <h4 class="p-3">Mobs</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Mob ID</th>
+                <th scope="col">Mob Name↑</th>
+                <th scope="col">Paddock Name</th>
+            </tr>
+        </thead>
+        <tbody>
         {% for mob in data['mobs'] %}  
             <tr>
-                <td>{{mob['id']}}</td>  
-                <td>{{mob['mob_name']}}</td>  
+                <td scope="row">{{mob['id']}}</td>  
+                <td scope="row">{{mob['mob_name']}}</td>
+                <td scope="row">{{mob['paddock_name']}}</td>
             </tr>
-        {% endfor %}    
+        {% endfor %}
+
+        </tbody>    
     </table>
 
 {% endblock %}

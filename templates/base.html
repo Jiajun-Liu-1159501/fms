@@ -30,13 +30,24 @@
             <a class="nav-link {{'active bg-success text-white' if data['page'] == 'home' else 'text-success'}}" id="home-pill" href="{{url_for('home')}}"><strong>Home</strong></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {{'active bg-success text-white' if data['page'] == 'mob' else 'text-success'}}" id="mob-pill" href="{{url_for('mobs')}}"><strong>Mobs</strong></a>
+            <a class="nav-link {{'active bg-success text-white' if data['page'] == 'mobs' else 'text-success'}}" id="mob-pill" href="{{url_for('mobs')}}"><strong>Mobs</strong></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{'active bg-success text-white' if data['page'] == 'paddocks' else 'text-success'}}" id="mob-pill" href="{{url_for('paddocks')}}"><strong>Paddocks</strong></a>
           </li>
         </ul>
       </nav>
       
       <div class="col-md-9 ms-sm-auto col-lg-10 px-4">
-
+        <div class="d-flex align-items-center mb-3">
+          <p class="p-3">Current Location: </p>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a class="text-success" href="{{url_for('home')}}">Home</a></li>
+              <li class="breadcrumb-item"><a class="text-success" href="{{url_for('mobs')}}">Mobs</a></li>
+            </ol>
+          </nav>
+        </div>
         {% block content %}
         {% endblock %}
       </div>

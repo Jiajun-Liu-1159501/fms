@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 
-{% block title %}Paddocks{% endblock %}
+{% block title %}FMS Paddocks{% endblock %}
 
 {% block content %}
 
-<p>Paddocks</p>
+    <h4 class="p-3">Mobs</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Mob ID</th>
+                <th scope="col">Mob Name</th>
+                <th scope="col">Paddock Name</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for mob in data['mobs'] %}  
+            <tr>
+                <td scope="row">{{mob['id']}}</td>  
+                <td scope="row">{{mob['mob_name']}}</td>
+                <td scope="row">{{mob['paddock_name']}}</td>
+            </tr>
+        {% endfor %}
+
+        </tbody>    
+    </table>
 
 {% endblock %}
-
-    <!-- <nav>
-      <h2>Farm Management Simulator</h2>
-      <p><a href="{{url_for('home')}}">Home</a></p>
-      <p><a href="{{url_for('mobs')}}">Mobs</a></p>
-    </nav>
-    <p>{% if session['curr_date'] %}Today is: {{session['curr_date'].strftime("%d %B %Y")}}{% endif %}</p>
-
-    <section class="content">
-      <header>
-        {% block header %}
-        {% endblock %}
-      </header>
-      {% for message in get_flashed_messages() %}
-        <div class="flash">{{ message }}</div>
-      {% endfor %}
-      {% block content %}
-      {% endblock %}
-    </section> -->
