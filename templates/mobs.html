@@ -11,10 +11,10 @@
             <th>Mob ID</th>
             <th>Mob Name</th>
         </tr>
-        {% for mob in mobs %}  
+        {% for mob in data['mobs'] %}  
             <tr>
                 <td>{{mob['id']}}</td>  
-                <td>{{mob['name']}}</td>  
+                <td>{{mob['mob_name']}}</td>  
             </tr>
         {% endfor %}    
     </table>

@@ -1,6 +1,4 @@
-from itertools import groupby
-from operator import itemgetter
-from turtle import st
+from blinker import ANY
 from flask import Flask, Response, g, jsonify
 from flask import render_template
 from flask import request
@@ -8,7 +6,7 @@ from flask import redirect
 from flask import url_for
 from flask import session
 from datetime import date, datetime, timedelta
-import mysql.connector, connect
+import connect
 from typing import Any, Dict, Generic, List, TypeVar, Callable
 from mysql.connector import pooling, cursor
 
@@ -58,7 +56,8 @@ def do_after(response: Response) -> None:
 def home():
     if 'curr_date' not in session:
         session.update({'curr_date': start_date})
-    return render_template("home.html")
+    data: Dict[str, Any] = {"page": "home"} 
+    return render_template("home.html", data = data)
 
 @app.route("/clear-date")
 def clear_date():
@@ -82,10 +81,11 @@ def mobs() -> str:
     List the mob details (excludes the stock in each mob).
     """
     cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
-    query: str = "SELECT id, name FROM mobs ORDER BY name ASC;"
+    query: str = "SELECT a.id, a.name as mob_name, b.name as paddock_name FROM mobs a LEFT JOIN paddocks b on a.paddock_id = b.id ORDER BY a.name ASC;"
     cur.execute(query)        
-    mobs: List[Dict[str, Any]] = cur.fetchall()        
-    return render_template("mobs.html", mobs = mobs)
+    mobs: List[Dict[str, Any]] = cur.fetchall()   
+    data: Dict[str, Any] = {"page": "mob", "mobs": mobs}      
+    return render_template("mobs.html", data = data)
 
 @app.get("/stocks")
 def stocks() -> str:
@@ -113,16 +113,22 @@ def paddocks() -> str:
     List paddock details.
     """
     cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
-    query: str = "SELECT a.*, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id ORDER BY a.name ASC;"
+    query: str = "SELECT a.*, b.name as mob_name, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id ORDER BY a.name ASC;"
     cur.execute(query)
     paddocks: List[Dict[str. Any]] = cur.fetchall()
-    return render_template("paddocks.html", paddocks = paddocks)
+    return jsonify(paddocks)
 
-@app.post("/move")
+@app.post("/move",)
 def move_paddocks() -> str:
     """
     move between different paddocks
     """
+    source_id: int = int(request.form().get("source_id"))
+    target_id: int = int(request.form().get("target_id"))
+    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    target_check_query: str = "SELECT * FROM paddocks"
+    
+
     
 
 if __name__ == "__main__":
