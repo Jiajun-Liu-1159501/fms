@@ -4,21 +4,40 @@
 
 {% block content %}
 
-    <h4 class="p-3">Mobs</h4>
+    <h4 class="mb-3">Paddock List:</h4>
+    <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#table_collapse" aria-expanded="false" aria-controls="table_collapse" onclick="this.innerHTML = this.getAttribute('aria-expanded') === 'false' ? 'Expand' : 'Collapse'">
+        Collapse
+    </button>
     <table class="table table-striped">
         <thead>
             <tr>
-                <th scope="col">Mob ID</th>
+                <th scope="col">Paddock ID</th>
+                <th scope="col">Paddock Name↑</th>
+                <th scope="col">Paddock Area</th>
+                <th scope="col">DM per HA</th>
+                <th scope="col">Total DM</th>
                 <th scope="col">Mob Name</th>
-                <th scope="col">Paddock Name</th>
+                <th scope="col">Total Stock</th>
+                <th scope="col">Options</th>
             </tr>
         </thead>
-        <tbody>
-        {% for mob in data['mobs'] %}  
+        <tbody class="collapse show", id="table_collapse">
+        {% for paddock in data['paddocks'] %}  
             <tr>
-                <td scope="row">{{mob['id']}}</td>  
-                <td scope="row">{{mob['mob_name']}}</td>
-                <td scope="row">{{mob['paddock_name']}}</td>
+                <td scope="row">{{paddock['id']}}</td>  
+                <td scope="row">{{paddock['name']}}</td>
+                <td scope="row">{{paddock['area']}}</td>
+                {% if paddock['dm_per_ha'] <= 1500 %}
+                    <td scope="row" class="table-danger">{{paddock['dm_per_ha']}}</td>
+                {% elif paddock['dm_per_ha'] <= 1800 %}
+                    <td scope="row" class="table-warning">{{paddock['dm_per_ha']}}</td>
+                {% else %}
+                    <td scope="row" >{{paddock['dm_per_ha']}}</td>
+                {% endif %}
+                <td scope="row">{{paddock['total_dm']}}</td>
+                <td scope="row">{{paddock['mob_name']}}</td>
+                <td scope="row">{{paddock['sotck_num']}}</td>
+                <td scope="row"></td>
             </tr>
         {% endfor %}
 

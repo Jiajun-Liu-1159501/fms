@@ -105,7 +105,8 @@ def stocks() -> str:
     for mob in mob_dict:
         stocks = grouped_stocks.get(mob.get("mob_id"))
         mob.setdefault("stocks", stocks)
-    return jsonify(mob_dict)
+    data: Dict[str, Any] = {"page": "stocks", "mob_dict": mob_dict}    
+    return render_template("stocks.html", data = data)
 
 @app.get("/paddocks")
 def paddocks() -> str:

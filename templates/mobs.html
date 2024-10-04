@@ -4,7 +4,10 @@
 
 {% block content %}
 
-    <h4 class="p-3">Mobs</h4>
+    <h4 class="mb-3">Mob List:</h4>
+    <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#table_collapse" aria-expanded="false" aria-controls="table_collapse" onclick="this.innerHTML = this.getAttribute('aria-expanded') === 'false' ? 'Expand' : 'Collapse'">
+        Collapse
+    </button>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -13,16 +16,16 @@
                 <th scope="col">Paddock Name</th>
             </tr>
         </thead>
-        <tbody>
-        {% for mob in data['mobs'] %}  
-            <tr>
-                <td scope="row">{{mob['id']}}</td>  
-                <td scope="row">{{mob['mob_name']}}</td>
-                <td scope="row">{{mob['paddock_name']}}</td>
-            </tr>
-        {% endfor %}
-
-        </tbody>    
+        <tbody class="collapse show", id="table_collapse">
+            {% for mob in data['mobs'] %}  
+                <tr>
+                    <td scope="row">{{mob['id']}}</td>  
+                    <td scope="row">{{mob['mob_name']}}</td>
+                    <td scope="row">{{mob['paddock_name']}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>  
     </table>
+
 
 {% endblock %}
