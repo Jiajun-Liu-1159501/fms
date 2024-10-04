@@ -12,10 +12,13 @@
 
   <body>
 
-    <nav class="navbar bg-success text-white" data-bs-theme="dark">
+    <nav class="navbar bg-success text-white sticky-top" data-bs-theme="dark">
       <div class="container-fluid">
         <div class="row align-items-center">
           <div class="col tex-center">
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" aria-label="Toggle sidebar">
+              <span class="navbar-toggler-icon"></span>
+            </button>
             <h3 class="p-3 d-inline-block">Farm Management Simulator</h3>
             <p class="p-3 d-inline-block">{% if session['curr_date'] %}Today is: {{session['curr_date'].strftime("%d %B %Y")}}{% endif %}</p>
           </div>
@@ -23,8 +26,12 @@
       </div>
     </nav>
 
-    <div class="row">
-      <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title text-success" id="offcanvasLabel">FMS Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
         <ul class="nav nav-pills flex-column">
           <li class="nav-item">
             <a class="nav-link {{'active bg-success text-white' if data['page'] == 'home' else 'text-success'}}" id="home-pill" href="{{url_for('home')}}"><strong>Home</strong></a>
@@ -39,22 +46,12 @@
             <a class="nav-link {{'active bg-success text-white' if data['page'] == 'stocks' else 'text-success'}}" id="mob-pill" href="{{url_for('stocks')}}"><strong>Stocks</strong></a>
           </li>
         </ul>
-      </nav>
-      
-      <div class="col-md-9 ms-sm-auto col-lg-10 px-4">
-        <div class="d-flex align-items-center mb-3">
-          <p>Current location:&nbsp;&nbsp;</p>
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a class="text-success" href="{{url_for('home')}}">Home</a></li>
-              <li class="breadcrumb-item"><a class="text-success" href="{{url_for('mobs')}}">Mobs</a></li>
-            </ol>
-          </nav>
-        </div>
-        {% block content %}
-        {% endblock %}
       </div>
     </div>
+
+    {% block content %}
+    {% endblock %}
+
 
 
     <!-- JavaScript Bundle with Popper -->

@@ -4,3 +4,16 @@
 
 {% block content %}
 
+<div class="col-md-9 ms-sm-auto col-lg-10 px-4">
+    <div class="d-flex align-items-center mb-3">
+      <p>Current location:&nbsp;&nbsp;</p>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a class="text-success" href="{{url_for('home')}}">Home</a></li>
+          <li class="breadcrumb-item"><a class="text-success" href="{{url_for('mobs')}}">Mobs</a></li>
+        </ol>
+      </nav>
+    </div>
+    {% block content %}
+    {% endblock %}
+  </div>

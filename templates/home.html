@@ -4,8 +4,29 @@
 
 {% block content %}
 
-<p>Home:  Add some brief text and an image here </p>
-
-
+<div class="container-fluid">
+    <div id="home_carousel" class="carousel carousel-light slide">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#home_carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active" data-bs-interval="1000">
+            <img src="../static/cow.jpeg" class="img-fluid" alt="Silde1">
+            <div class="carousel-caption d-flex flex-column justify-content-center align-items-center" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+              <h1 class="mb-3 tex-center display-1 text-nowrap"><strong>Farm Management Simulator</strong></h1>
+              <p class="mb-3 text-center fs-1 text-nowrap">Empower Your Farm, Enrich Your Life</p>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#home_carousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#home_carousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+</div>
 
 {% endblock %}
