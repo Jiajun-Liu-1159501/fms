@@ -3,29 +3,43 @@
 {% block title %}FMS Mobs{% endblock %}
 
 {% block content %}
+    
+    <div class="container">
+        
+        <div class="d-flex align-items-center mb-3">
+            <p>Current location:&nbsp;&nbsp;</p>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a class="text-success" href="{{url_for('home')}}">Home</a></li>
+                <li class="breadcrumb-item"><a class="text-success" href="{{url_for('mobs')}}">Mobs</a></li>
+              </ol>
+            </nav>
+        </div>
 
-    <h4 class="mb-3">Mob List:</h4>
-    <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#table_collapse" aria-expanded="false" aria-controls="table_collapse" onclick="this.innerHTML = this.getAttribute('aria-expanded') === 'false' ? 'Expand' : 'Collapse'">
-        Collapse
-    </button>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Mob ID</th>
-                <th scope="col">Mob Name↑</th>
-                <th scope="col">Paddock Name</th>
-            </tr>
-        </thead>
-        <tbody class="collapse show", id="table_collapse">
-            {% for mob in data['mobs'] %}  
+        <h4 class="mb-3">Mob List:</h4>
+        
+        <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#table_collapse" aria-expanded="false" aria-controls="table_collapse" onclick="this.innerHTML = this.getAttribute('aria-expanded') === 'false' ? 'Expand' : 'Collapse'">
+            Collapse
+        </button>
+        
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td scope="row">{{mob['id']}}</td>  
-                    <td scope="row">{{mob['mob_name']}}</td>
-                    <td scope="row">{{mob['paddock_name']}}</td>
+                    <th scope="col">Mob ID</th>
+                    <th scope="col">Mob Name↑</th>
+                    <th scope="col">Paddock Name</th>
                 </tr>
-            {% endfor %}
-        </tbody>  
-    </table>
-
+            </thead>
+            <tbody class="collapse show", id="table_collapse">
+                {% for mob in data['mobs'] %}  
+                    <tr>
+                        <td scope="row">{{mob['id']}}</td>  
+                        <td scope="row">{{mob['mob_name']}}</td>
+                        <td scope="row">{{mob['paddock_name']}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>  
+        </table>
+    </div>
 
 {% endblock %}

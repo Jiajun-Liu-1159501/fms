@@ -4,48 +4,61 @@
 
 {% block content %}
 
+    <div class="container">
 
-    {% for mob in data['mob_dict']%}
+        <div class="d-flex align-items-center mb-3">
+            <p>Current location:&nbsp;&nbsp;</p>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a class="text-success" href="{{url_for('home')}}">Home</a></li>
+                <li class="breadcrumb-item"><a class="text-success" href="{{url_for('stocks')}}">Stocks</a></li>
+              </ol>
+            </nav>
+        </div>
 
-        <h4 class="mb-3">{{mob['mob_name']}}:</h4>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">Mob ID↑</th>
-                    <th scope="col">Mob Name</th>
-                    <th scope="col">Stock Count</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td scope="row">{{mob['mob_id']}}</td>  
-                    <td scope="row">{{mob['mob_name']}}</td>
-                    <td scope="row">{{mob['stocks']|length}}</td>
-                </tr>
-            </tbody>    
-        </table>
-        <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#table_collapse_{{mob['mob_id']}}" aria-expanded="false" aria-controls="table_collapse_{{mob['mob_id']}}" onclick="this.innerHTML = this.getAttribute('aria-expanded') === 'false' ? 'Expand' : 'Collapse'">
-            Collapse
-        </button>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">Stock ID↑</th>
-                    <th scope="col">Stock Age</th>
-                    <th scope="col">Stock Weight</th>
-                </tr>
-            </thead>
-            <tbody class="collapse show", id="table_collapse_{{mob['mob_id']}}">
-            {% for stock in mob['stocks'] %}  
-                <tr>
-                    <td scope="row">{{stock['id']}}</td>  
-                    <td scope="row">{{stock['dob']}}</td>
-                    <td scope="row">{{stock['weight']}}</td>
-                </tr>
-            {% endfor %}
-            </tbody>    
-        </table>
+        {% for mob in data['mob_dict']%}
 
-    {% endfor %}
+            <h4 class="mb-3">{{mob['mob_name']}}:</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Mob ID↑</th>
+                        <th scope="col">Mob Name</th>
+                        <th scope="col">Stock Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td scope="row">{{mob['mob_id']}}</td>  
+                        <td scope="row">{{mob['mob_name']}}</td>
+                        <td scope="row">{{mob['stocks']|length}}</td>
+                    </tr>
+                </tbody>    
+            </table>
+            <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#table_collapse_{{mob['mob_id']}}" aria-expanded="false" aria-controls="table_collapse_{{mob['mob_id']}}" onclick="this.innerHTML = this.getAttribute('aria-expanded') === 'false' ? 'Expand' : 'Collapse'">
+                Collapse
+            </button>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Stock ID↑</th>
+                        <th scope="col">Stock Age</th>
+                        <th scope="col">Stock Weight</th>
+                    </tr>
+                </thead>
+                <tbody class="collapse show", id="table_collapse_{{mob['mob_id']}}">
+                {% for stock in mob['stocks'] %}  
+                    <tr>
+                        <td scope="row">{{stock['id']}}</td>  
+                        <td scope="row">{{stock['dob']}}</td>
+                        <td scope="row">{{stock['weight']}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>    
+            </table>
+
+        {% endfor %}
+
+    </div>
 
 {% endblock %}

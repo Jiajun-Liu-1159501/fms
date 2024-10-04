@@ -10,7 +10,7 @@
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   </head>
 
-  <body>
+  <body class="d-flex flex-column vh-100">
 
     <nav class="navbar bg-success text-white sticky-top" data-bs-theme="dark">
       <div class="container-fluid">
@@ -49,9 +49,35 @@
       </div>
     </div>
 
-    {% block content %}
-    {% endblock %}
-
+    <div class="content flex-grow-1">
+      {% block content %}
+      {% endblock %}
+    </div>
+    
+    <footer class="bg-success text-white text-center text-lg-start mt-auto py-3">
+      <div class="container">
+          <div class="row">
+              <div class="col-lg-4 col-md-12">
+                <h5>About</h5>
+                <p>COMP Course 636</p>
+              </div>
+              <div class="col-lg-4 col-md-12">
+                <h5>Follow Me</h5>
+                <div><a href="#!" class="text-decoration-none">Twitter</a></div>
+                <div><a href="#!" class="text-decoration-none">Facebook</a></div>
+                <div><a href="#!" class="text-decoration-none">Instagram</a></div>
+              </div>
+              <div class="col-lg-4 col-md-12">
+                  <h5>Contact Info</h5>
+                  <p>Student ID: 1159501</p>
+                  <p>Name: Jiajun LIU</p>
+              </div>
+          </div>
+      </div>
+      <div class="text-center bg-success py-2">
+          <p class="mb-0">&copy; 2024 No Company.</p>
+      </div>
+    </footer>
 
 
     <!-- JavaScript Bundle with Popper -->
