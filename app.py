@@ -40,7 +40,7 @@ def do_before() -> None:
     """
     bind a db session to a request thread using arg g befor handling request
     """
-    connection: pooling.PooledMySQLConnection = connection_pool.get_connection() # borrow a connection from a pool 
+    connection: pooling.PooledMySQLConnection = connection_pool.get_connection() # borrow a connection from a pool
     g.db_connection = connection
 
 @app.after_request

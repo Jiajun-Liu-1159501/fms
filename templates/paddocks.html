@@ -49,7 +49,7 @@
                         <td scope="row" >{{paddock['dm_per_ha']}}</td>
                     {% endif %}
                     <td scope="row">{{paddock['total_dm']}}</td>
-                    <td scope="row">{{paddock['mob_name']}}</td>
+                    <td scope="row">{{paddock['mob_name'] if paddock['mob_name'] else ''}}</td>
                     <td scope="row">{{paddock['sotck_num']}}</td>
                     <td scope="row"></td>
                 </tr>
