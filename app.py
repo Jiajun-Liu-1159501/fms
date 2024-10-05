@@ -21,7 +21,7 @@ stock_consumption_rate = 14 #kg DM/animal/day
 def _init_connection_pool() -> pooling.MySQLConnectionPool:
     """
     init database connection pool useing args in connect.py given,
-    using single database conection in mutiple thread web application is not thread safey
+    using single database conection in mutiple threads web application is not thread safey
     """
     db_config: Dict[str, Any] = {
         "host": connect.dbhost,
@@ -31,16 +31,16 @@ def _init_connection_pool() -> pooling.MySQLConnectionPool:
         "database": connect.dbname,
         "autocommit": True
     }
-    return pooling.MySQLConnectionPool(pool_name = "db_conn_pool", pool_size = 3, **db_config)
+    return pooling.MySQLConnectionPool(pool_name = "db_conn_pool", pool_size = 3, **db_config) # the max db connetion in pool is setted to 3
 
 connection_pool: pooling.MySQLConnectionPool = _init_connection_pool() #use pooled objects instead single connection instance
 
 @app.before_request
 def do_before() -> None:
     """
-    bind a db session to a request thread using arg g befor handling
+    bind a db session to a request thread using arg g befor handling request
     """
-    connection: pooling.PooledMySQLConnection = connection_pool.get_connection()
+    connection: pooling.PooledMySQLConnection = connection_pool.get_connection() # borrow a connection from a pool 
     g.db_connection = connection
 
 @app.after_request
@@ -49,7 +49,7 @@ def do_after(response: Response) -> None:
     return a db session to connection pool after request
     """
     connection: pooling.PooledMySQLConnection = g.db_connection
-    connection.close() # close method will return the connection to the pool, not closing a connection
+    connection.close() # close() method will return the connection to the pool, not closing a connection
     return response
 
 @app.route("/")
