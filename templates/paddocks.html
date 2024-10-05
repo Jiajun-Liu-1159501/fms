@@ -51,12 +51,54 @@
                     <td scope="row">{{paddock['total_dm']}}</td>
                     <td scope="row">{{paddock['mob_name'] if paddock['mob_name'] else ''}}</td>
                     <td scope="row">{{paddock['sotck_num']}}</td>
-                    <td scope="row"></td>
+                    <td scope="row">
+                        <button type="button" class="btn btn-outline-success edit_button">Edit</button>
+                        <button type="button" class="btn btn-outline-warning {{'d-none' if paddock['mob_name'] else ''}}" onclick="handle_move_in(this)">Move In</button>
+                        <button type="button" class="btn btn-outline-danger d-none" onclick="cancel_move(this)">Cancel Move</button>
+                        <button type="button" class="btn btn-outline-warning d-none move_out_button" data-can-move-out="{{'true' if paddock['mob_name'] else 'false'}}" onclick="handle_move_out(this)">Move Out</button>
+                    </td>
                 </tr>
             {% endfor %}
 
             </tbody>    
         </table>
+        
+        <script>
+
+            
+
+            function handle_move_in(button) {
+                const row = button.closest('tr');
+                const buttons = row.querySelectorAll('button');
+                document.querySelectorAll('.edit_button').forEach(btn => btn.disabled = true)    //disable all edit button
+                buttons[1].classList.add('d-none');     //hide current move in button
+                buttons[2].classList.remove('d-none');     //show move cancel button
+                document.querySelectorAll('.move_out_button').forEach(btn => {
+                    if (btn.getAttribute('data-can-move-out') == 'true') {
+                        btn.classList.remove('d-none')
+                    }
+                })
+            }
+
+            function handle_move_out(button) {
+
+            }
+
+            function cancel_move(button) {
+                const row = button.closest('tr');
+                const buttons = row.querySelectorAll('button');
+                document.querySelectorAll('.edit_button').forEach(btn => btn.disabled = false)    //enable all edit button
+                buttons[1].classList.remove('d-none');     //hide current move in button
+                buttons[2].classList.add('d-none');     //show move cancel button
+                document.querySelectorAll('.move_out_button').forEach(btn => {
+                    if (btn.getAttribute('data-can-move-out') == 'true') {
+                        btn.classList.add('d-none')
+                    }
+                })
+            }
+
+        </script>
+
     </div>
 
 {% endblock %}
