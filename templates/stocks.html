@@ -28,18 +28,30 @@
                     </h2>
                     <div id="collapse-{{mob['mob_id']}}" class="accordion-collapse collapse show">
                         <div class="accordion-body">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item list-group-item-success">
-                                  <p>Mob ID:    {{mob['mob_id']}}</p>
-                                </li>
-                                <li class="list-group-item list-group-item-success">
-                                  <p>Stock Count:   {{mob['stocks']|length}}</p>
-                                </li>
-                                <li class="list-group-item list-group-item-success">
-                                    <p>Average Stock Weight:    {{mob['stocks']|length}}</p>
-                                </li>
-                            </ul>
-                            <h5 class="mb-3 mt-3"> Stocks for <span class="text-success">{{mob['mob_name']}}:</span></h5>
+                            <h5 class="mb-3 mt-3">Mob Details:</span></h5>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" scope="col">Mob ID↑</th>
+                                        <th class="text-center" scope="col">Mob Name</th>
+                                        <th class="text-center" scope="col">Stock Count</th>
+                                        <th class="text-center" scope="col">Average Stock Weight</th>
+                                        <th class="text-center" scope="col">Paddock ID</th>
+                                        <th class="text-center" scope="col">Paddock Name:</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center" scope="row"><strong>{{mob['mob_id']}}</strong></td>  
+                                        <td class="text-center" scope="row"><strong>{{mob['mob_name']}}</strong></td>
+                                        <td class="text-center" scope="row"><strong>{{mob['stocks']|length}}</strong></td>
+                                        <td class="text-center" scope="row"><strong>{{mob['stocks']|length}}</strong></td>
+                                        <td class="text-center" scope="row"><strong>{{mob['paddock_id']}}</strong></td>
+                                        <td class="text-center" scope="row"><strong>{{mob['paddock_name']}}</strong></td>
+                                    </tr>
+                                </tbody>    
+                            </table>
+                            <h5 class="mb-3 mt-3">Stocks for <span class="text-success">{{mob['mob_name']}}:</span></h5>
                             <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#table_collapse_{{mob['mob_id']}}" aria-expanded="false" aria-controls="table_collapse_{{mob['mob_id']}}" onclick="this.innerHTML = this.getAttribute('aria-expanded') === 'false' ? 'Expand Table' : 'Collapse Table'">
                                 Collapse Table
                             </button>

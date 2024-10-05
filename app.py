@@ -120,7 +120,7 @@ def paddocks() -> str:
     data: Dict[str, Any] = {"page": "paddocks", "paddocks": paddocks}
     return render_template("paddocks.html", data = data)
 
-@app.post("/move",)
+@app.post("/move")
 def move_paddocks() -> str:
     """
     move between different paddocks
