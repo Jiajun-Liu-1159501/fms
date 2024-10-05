@@ -61,6 +61,7 @@
                                         <th scope="col">Stock ID↑</th>
                                         <th scope="col">Stock Age</th>
                                         <th scope="col">Stock Weight</th>
+                                        <th scope="col">Options</th>
                                     </tr>
                                 </thead>
                                 <tbody class="collapse show", id="table_collapse_{{mob['mob_id']}}">
@@ -69,6 +70,9 @@
                                         <td scope="row">{{stock['id']}}</td>  
                                         <td scope="row">{{stock['dob']}}</td>
                                         <td scope="row">{{stock['weight']}}</td>
+                                        <td scope="row">
+                                            <button type="button" class="btn btn-warning edit_button">Edit</button>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>    
