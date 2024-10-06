@@ -1,3 +1,4 @@
+from decimal import Decimal
 from flask import Flask, Response, g
 from flask import render_template
 from flask import request
@@ -126,14 +127,16 @@ def edit_paddocks() -> str:
     edit a paddock
     """
     g.page = "paddocks"
-    params: Tuple[int] = (int(request.form.get("target_id")), int(request.form.get("source_id")))
+    paddock_id: int = request.form.get("paddock_id")
     cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
-    paddock_valid_query = "SELECT COUNT(1) as count FROM paddocks WHERE id IN (%s , %s);"   # make sure two paddocks exist
-    cur.execute(paddock_valid_query, params)
-    if cur.fetchone()['count'] != 2:
+    paddock_valid_query: str = "SELECT COUNT(1) as count FROM paddocks WHERE id = %s;"   # make sure two paddocks exist
+    cur.execute(paddock_valid_query, paddock_id)
+    if cur.fetchone()['count'] != 1:
         raise Exception("invalid paddock id submitted")
-    update_statement = "UPDATE mobs SET paddock_id = %s WHERE paddock_id = %s;"
-    cur.execute(update_statement, params)
+    name: str = request.form.get("paddock_name")
+    area: Decimal = Decimal(request.form.get("paddock_area"))
+    update_statement = "UPDATE paddocks SET name = %s, area = %s, total_dm = %s WHERE paddock_id = %s;"
+    cur.execute(update_statement, None)
     return redirect(url_for("paddocks"))
 
 @app.post("/paddcoks/move")
@@ -144,11 +147,11 @@ def move_paddocks() -> str:
     g.page = "paddocks"
     params: Tuple[int] = (int(request.form.get("target_id")), int(request.form.get("source_id")))
     cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
-    paddock_valid_query = "SELECT COUNT(1) as count FROM paddocks WHERE id IN (%s , %s);"   # make sure two paddocks exist
+    paddock_valid_query: str = "SELECT COUNT(1) as count FROM paddocks WHERE id IN (%s , %s);"   # make sure two paddocks exist
     cur.execute(paddock_valid_query, params)
     if cur.fetchone()['count'] != 2:
         raise Exception("invalid paddock id submitted")
-    update_statement = "UPDATE mobs SET paddock_id = %s WHERE paddock_id = %s;"
+    update_statement: str = "UPDATE mobs SET paddock_id = %s WHERE paddock_id = %s;"
     cur.execute(update_statement, params)
     return redirect(url_for("paddocks"))
     
