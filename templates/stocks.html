@@ -45,7 +45,7 @@
                                         <td class="text-center" scope="row"><strong>{{mob['mob_id']}}</strong></td>  
                                         <td class="text-center" scope="row"><strong>{{mob['mob_name']}}</strong></td>
                                         <td class="text-center" scope="row"><strong>{{mob['stocks']|length}}</strong></td>
-                                        <td class="text-center" scope="row"><strong>{{mob['stocks']|length}}</strong></td>
+                                        <td class="text-center" scope="row"><strong>{{mob['average_weight']}}</strong></td>
                                         <td class="text-center" scope="row"><strong>{{mob['paddock_id']}}</strong></td>
                                         <td class="text-center" scope="row"><strong>{{mob['paddock_name']}}</strong></td>
                                     </tr>
@@ -60,6 +60,7 @@
                                     <tr>
                                         <th scope="col">Stock ID↑</th>
                                         <th scope="col">Stock Age</th>
+                                        <th scope="col">Date of Birth</th>
                                         <th scope="col">Stock Weight (KG)</th>
                                         <th scope="col">Options</th>
                                     </tr>
@@ -67,7 +68,8 @@
                                 <tbody class="collapse show", id="table_collapse_{{mob['mob_id']}}">
                                 {% for stock in mob['stocks'] %}  
                                     <tr>
-                                        <td scope="row">{{stock['id']}}</td>  
+                                        <td scope="row">{{stock['id']}}</td>
+                                        <td scope="row">{{stock['age']}}</td>  
                                         <td scope="row">{{stock['dob']}}</td>
                                         <td scope="row">{{stock['weight']}}</td>
                                         <td scope="row">

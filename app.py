@@ -1,7 +1,4 @@
-from curses import delay_output
 from decimal import ROUND_HALF_UP, Decimal
-import decimal
-import re
 from flask import Flask, Response, g
 from flask import render_template
 from flask import request
@@ -17,7 +14,7 @@ from mysql.connector import pooling, cursor
 app = Flask(__name__)
 app.secret_key = 'COMP636 S2'
 
-start_date = datetime(2024,10,29)
+start_date: datetime = datetime(2024,10,29)
 pasture_growth_rate = 65    #kg DM/ha/day
 stock_consumption_rate = 14 #kg DM/animal/day
 
@@ -106,10 +103,21 @@ def stocks() -> str:
     for item in stock_dict:
         grouped_stocks.setdefault(item.get("mob_id"), []).append(item)
     for mob in mob_dict:
-        stocks = grouped_stocks.get(mob.get("mob_id"))
+        stocks: List[Dict[str, Any]] = grouped_stocks.get(mob.get("mob_id"))
+        total_sum: Decimal = Decimal(0.00)
+        for stock in stocks:
+            total_sum += Decimal(stock.get("weight"))
+            stock.setdefault("age", _calculate_age(stock.get("dob"), start_date.date()))
         mob.setdefault("stocks", stocks)
+        mob.setdefault("average_weight", (total_sum / len(stocks)).quantize(Decimal('0.00'), ROUND_HALF_UP))
     data: Dict[str, Any] = {"page": "stocks", "mob_dict": mob_dict}    
     return render_template("stocks.html", data = data)
+
+def _calculate_age(date_of_birth: date, current_date: date) -> int:
+    age = current_date.year - date_of_birth.year
+    if (current_date.month, current_date.day) < (date_of_birth.month, date_of_birth.day):
+        age -= 1
+    return age
 
 @app.get("/paddocks")
 def paddocks() -> str:
@@ -201,8 +209,7 @@ def unknown_error_handler(exp: Exception) -> str:
     return render_template("error.html", data = data)
 
 def _calculate_total_dm(area: Decimal, dh: Decimal) -> Decimal:
-    total_dm: Decimal = area * dh
-    return total_dm.quantize(Decimal('0.0'), rounding = ROUND_HALF_UP)
+    return (area * dh).quantize(Decimal('0.0'), rounding = ROUND_HALF_UP)
 
 if __name__ == "__main__":
     app.run()
