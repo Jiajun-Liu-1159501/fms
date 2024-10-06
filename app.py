@@ -1,4 +1,3 @@
-from blinker import ANY
 from flask import Flask, Response, g, jsonify
 from flask import render_template
 from flask import request
@@ -130,7 +129,12 @@ def move_paddocks() -> str:
     cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
     target_check_query: str = "SELECT * FROM paddocks"
     
-
+@app.errorhandler(Exception)
+def unknown_error_handler(exp: Exception) -> str:
+    """
+    handle global exception, in this case catch base exception only and return the same error page
+    """
+    return render_template("error.html")
     
 
 if __name__ == "__main__":

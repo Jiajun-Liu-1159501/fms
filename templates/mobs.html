@@ -37,7 +37,9 @@
                         <td scope="row">{{mob['id']}}</td>  
                         <td scope="row">{{mob['mob_name']}}</td>
                         <td scope="row">{{mob['paddock_name']}}</td>
-                        <td scope="row">No options available</td>
+                        <td scope="row">
+                            <button type="button" class="btn btn-warning edit_button" disabled>Edit</button>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>  
