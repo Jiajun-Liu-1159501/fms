@@ -121,6 +121,25 @@ def paddocks() -> str:
     data: Dict[str, Any] = {"page": g.page, "paddocks": paddocks}
     return render_template("paddocks.html", data = data)
 
+@app.post("/paddcoks/add")
+def add_paddocks() -> str:
+    """
+    edit a paddock
+    """
+    g.page = "paddocks"
+    paddock_name: str = request.form.get("paddock_name")
+    print(paddock_name)
+    # cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    # paddock_valid_query: str = "SELECT COUNT(1) as count FROM paddocks WHERE id = %s;"   # make sure two paddocks exist
+    # cur.execute(paddock_valid_query, paddock_id)
+    # if cur.fetchone()['count'] != 1:
+    #     raise Exception("invalid paddock id submitted")
+    # name: str = request.form.get("paddock_name")
+    # area: Decimal = Decimal(request.form.get("paddock_area"))
+    # update_statement = "UPDATE paddocks SET name = %s, area = %s, total_dm = %s WHERE paddock_id = %s;"
+    # cur.execute(update_statement, None)
+    return redirect(url_for("paddocks"))
+
 @app.post("/paddcoks/edit")
 def edit_paddocks() -> str:
     """
@@ -128,15 +147,18 @@ def edit_paddocks() -> str:
     """
     g.page = "paddocks"
     paddock_id: int = request.form.get("paddock_id")
-    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
-    paddock_valid_query: str = "SELECT COUNT(1) as count FROM paddocks WHERE id = %s;"   # make sure two paddocks exist
-    cur.execute(paddock_valid_query, paddock_id)
-    if cur.fetchone()['count'] != 1:
-        raise Exception("invalid paddock id submitted")
-    name: str = request.form.get("paddock_name")
-    area: Decimal = Decimal(request.form.get("paddock_area"))
-    update_statement = "UPDATE paddocks SET name = %s, area = %s, total_dm = %s WHERE paddock_id = %s;"
-    cur.execute(update_statement, None)
+    paddock_name: str = request.form.get("paddock_name")
+    print(paddock_id)
+    print(paddock_name)
+    # cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    # paddock_valid_query: str = "SELECT COUNT(1) as count FROM paddocks WHERE id = %s;"   # make sure two paddocks exist
+    # cur.execute(paddock_valid_query, paddock_id)
+    # if cur.fetchone()['count'] != 1:
+    #     raise Exception("invalid paddock id submitted")
+    # name: str = request.form.get("paddock_name")
+    # area: Decimal = Decimal(request.form.get("paddock_area"))
+    # update_statement = "UPDATE paddocks SET name = %s, area = %s, total_dm = %s WHERE paddock_id = %s;"
+    # cur.execute(update_statement, None)
     return redirect(url_for("paddocks"))
 
 @app.post("/paddcoks/move")

@@ -18,8 +18,12 @@
         
         <h4 class="mb-3">Paddock List:</h4>
         
-        <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#table_collapse" aria-expanded="false" aria-controls="table_collapse" onclick="this.innerHTML = this.getAttribute('aria-expanded') === 'false' ? 'Expand' : 'Collapse'">
-            Collapse
+        <button class="btn btn-success mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#table_collapse" aria-expanded="false" aria-controls="table_collapse" onclick="this.innerHTML = this.getAttribute('aria-expanded') === 'false' ? 'Expand Table' : 'Collapse Table'">
+            Collapse Table
+        </button>
+
+        <button class="btn btn-success mb-3" type="button" data-bs-toggle="modal" data-bs-target="#add-modal">
+            Add Paddock
         </button>
         
         <table class="table" style="table-layout: fixed;">
@@ -68,7 +72,7 @@
                 <div class="modal-content">
                     <form id="moveForm" action="/paddcoks/move" method="POST">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="move-modal-title">Paddock Movement Confirmation</h1>
+                            <h1 class="modal-title fs-5 text-success" id="move-modal-title">Paddock Movement Confirmation</h1>
                         </div>
                         <div class="modal-body">
                             <div class="row align-items-center justify-content-center">
@@ -117,14 +121,117 @@
                 <div class="modal-content">
                     <form id="editForm" action="/paddcoks/edit" method="POST">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="edit-modal-title">Paddock Editing</h1>
+                            <h1 class="modal-title fs-5 text-success" id="edit-modal-title">Paddock Editing</h1>
                         </div>
                         <div class="modal-body">
-
+                            <div class="mb-3 row">
+                                <label for="edit-id-input" class="col-sm-4 col-form-label text-success">Paddock ID</label>
+                                <div class="col-sm-8">
+                                    <input type="text" readonly class="form-control-plaintext text-secondary" id="edit-id-input" name="paddock_id">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="edit-name-input" class="col-sm-4 col-form-label text-success">Paddock Name</label>
+                                <div class="col-sm-8">
+                                    <input type="text" required class="form-control" id="edit-name-input" name="paddock_name">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="edit-area-input-text" class="col-sm-4 col-form-label text-success">Paddock Area (HA)</label>
+                                <div class="col-sm-8">
+                                    <input type="text" required class="form-control" id="edit-area-input-text" name="paddock_area" oninput="document.getElementById('edit-area-input-range').value = this.value">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <div class="col-sm-1">
+                                    <span class="form-text text-success">0</span> 
+                                </div>
+                                <div class="col-sm-10">
+                                    <input type="range" class="form-range" id="edit-area-input-range" min="0" max="10" step="0.01" oninput="document.getElementById('edit-area-input-text').value = this.value">
+                                </div>
+                                <div class="col-sm-1">
+                                    <span class="form-text text-success">10</span> 
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="edit-dm-input-text" class="col-sm-4 col-form-label text-success">DM / HA (KG/HA)</label>
+                                <div class="col-sm-8">
+                                    <input type="text" required class="form-control" id="edit-dm-input-text" name="paddock_dm" oninput="document.getElementById('edit-dm-input-range').value = this.value">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <div class="col-sm-1">
+                                    <span class="form-text text-success">0</span> 
+                                </div>
+                                <div class="col-sm-10">
+                                    <input type="range" class="form-range" id="edit-dm-input-range" min="0" max="10000" step="0.1" oninput="document.getElementById('edit-dm-input-text').value = this.value">
+                                </div>
+                                <div class="col-sm-1">
+                                    <span class="form-text text-success">10K</span> 
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                             <button type="submit" class="btn btn-warning">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal fade" id="add-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="add-modal-title" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered w-auto">
+                <div class="modal-content">
+                    <form id="editForm" action="/paddcoks/add" method="POST">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5 text-success" id="add-modal-title">Paddock Adding</h1>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3 row">
+                                <label for="add-name-input" class="col-sm-4 col-form-label text-success">Paddock Name</label>
+                                <div class="col-sm-8">
+                                    <input type="text" required class="form-control" id="add-name-input" value="" placeholder="Please enter a paddock name" name="paddock_name">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="add-area-input-text" class="col-sm-4 col-form-label text-success">Paddock Area (HA)</label>
+                                <div class="col-sm-8">
+                                    <input type="text" required class="form-control" id="add-area-input-text" value="" placeholder="Enter value or drag slider below" name="paddock_area" oninput="document.getElementById('add-area-input-range').value = this.value">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <div class="col-sm-1">
+                                    <span class="form-text text-success">0</span> 
+                                </div>
+                                <div class="col-sm-10">
+                                    <input type="range" class="form-range" id="add-area-input-range" min="0" max="10" step="0.01" value="" oninput="document.getElementById('add-area-input-text').value = this.value">
+                                </div>
+                                <div class="col-sm-1">
+                                    <span class="form-text text-success">10</span> 
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label for="add-dm-input-text" class="col-sm-4 col-form-label text-success">DM / HA (KG/HA)</label>
+                                <div class="col-sm-8">
+                                    <input type="text" required class="form-control" id="add-dm-input-text" placeholder="Enter value or drag slider below" name="paddock_dm" oninput="document.getElementById('add-dm-input-range').value = this.value">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <div class="col-sm-1">
+                                    <span class="form-text text-success">0</span> 
+                                </div>
+                                <div class="col-sm-10">
+                                    <input type="range" class="form-range" id="add-dm-input-range" min="0" max="10000" step="0.1" value="" oninput="document.getElementById('add-dm-input-text').value = this.value">
+                                </div>
+                                <div class="col-sm-1">
+                                    <span class="form-text text-success">10K</span> 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-success">Submit</button>
                         </div>
                     </form>
                 </div>
@@ -139,12 +246,12 @@
             function handle_move_in(button) {
                 const row = button.closest('tr');
                 const buttons = row.querySelectorAll('button');
-                document.querySelectorAll('.edit_button').forEach(btn => btn.disabled = true)    //disable all edit button
+                document.querySelectorAll('.edit_button').forEach(btn => btn.disabled = true);    //disable all edit button
                 buttons[1].classList.add('d-none');     //hide current move in button
                 buttons[2].classList.remove('d-none');     //show move cancel button
                 document.querySelectorAll('.move_out_button').forEach(btn => {
                     if (btn.getAttribute('data-can-move-out') == 'true') {
-                        btn.classList.remove('d-none')
+                        btn.classList.remove('d-none');
                     }
                 })
                 selectedRows.set('in', build_data_map(row));
@@ -155,21 +262,21 @@
                 const row = button.closest('tr');
                 selectedRows.set('out', build_data_map(row));
                 
-                document.getElementById('out-paddock-name').innerText = selectedRows.get('out').get('paddock_name')
+                document.getElementById('out-paddock-name').innerText = selectedRows.get('out').get('paddock_name');
                 document.getElementById('out-paddock-id').value = selectedRows.get('out').get('paddock_id')
-                document.getElementById('out-paddock-area').innerText = selectedRows.get('out').get('paddock_area')
-                document.getElementById('out-paddock-total').innerText = selectedRows.get('out').get('paddock_total')
-                document.getElementById('out-mob-name').innerText = selectedRows.get('out').get('mob_name')
-                document.getElementById('out-stocks').innerText = selectedRows.get('out').get('mob_stock')
+                document.getElementById('out-paddock-area').innerText = selectedRows.get('out').get('paddock_area');
+                document.getElementById('out-paddock-total').innerText = selectedRows.get('out').get('paddock_total');
+                document.getElementById('out-mob-name').innerText = selectedRows.get('out').get('mob_name');
+                document.getElementById('out-stocks').innerText = selectedRows.get('out').get('mob_stock');
 
-                document.getElementById('in-paddock-name').innerText = selectedRows.get('in').get('paddock_name')
-                document.getElementById('in-paddock-id').value = selectedRows.get('in').get('paddock_id')
-                document.getElementById('in-paddock-area').innerText = selectedRows.get('in').get('paddock_area')
-                document.getElementById('in-paddock-total').innerText = selectedRows.get('in').get('paddock_total')
+                document.getElementById('in-paddock-name').innerText = selectedRows.get('in').get('paddock_name');
+                document.getElementById('in-paddock-id').value = selectedRows.get('in').get('paddock_id');
+                document.getElementById('in-paddock-area').innerText = selectedRows.get('in').get('paddock_area');
+                document.getElementById('in-paddock-total').innerText = selectedRows.get('in').get('paddock_total');
 
                 const modal = new bootstrap.Modal(document.getElementById('move-modal'));
                 modal.show();
-                reset_buttons(target_row)
+                reset_buttons(target_row);
             }
 
             function cancel_move(button) {
@@ -184,23 +291,30 @@
                 buttons[2].classList.add('d-none');     //show move cancel button
                 document.querySelectorAll('.move_out_button').forEach(btn => {
                     if (btn.getAttribute('data-can-move-out') == 'true') {
-                        btn.classList.add('d-none')
+                        btn.classList.add('d-none');
                     }
-                })
+                });
             }
 
             function build_data_map(row) {
                 let target_map = new Map();
-                target_map.set('paddock_id', row.cells[0].innerText)
-                target_map.set('paddock_name', row.cells[1].innerText)
-                target_map.set('paddock_area', row.cells[2].innerText)
-                target_map.set('paddock_total', row.cells[4].innerText)
-                target_map.set('mob_name', row.cells[5].innerText)
-                target_map.set('mob_stock', row.cells[6].innerText)
+                target_map.set('paddock_id', row.cells[0].innerText);
+                target_map.set('paddock_name', row.cells[1].innerText);
+                target_map.set('paddock_area', row.cells[2].innerText);
+                target_map.set('paddock_total', row.cells[4].innerText);
+                target_map.set('mob_name', row.cells[5].innerText);
+                target_map.set('mob_stock', row.cells[6].innerText);
                 return target_map;
             }
 
             function handle_edit(button) {
+                const row = button.closest('tr');
+                document.getElementById('edit-id-input').value = row.cells[0].innerText;
+                document.getElementById('edit-name-input').value = row.cells[1].innerText;
+                document.getElementById('edit-area-input-text').value = row.cells[2].innerText;
+                document.getElementById('edit-area-input-range').value = row.cells[2].innerText;
+                document.getElementById('edit-dm-input-text').value = row.cells[3].innerText;
+                document.getElementById('edit-dm-input-range').value = row.cells[3].innerText;
                 const modal = new bootstrap.Modal(document.getElementById('edit-modal'));
                 modal.show();
             }
