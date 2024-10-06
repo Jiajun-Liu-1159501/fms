@@ -66,46 +66,48 @@
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered w-auto">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Paddock Movement Confirmation</h1>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row align-items-center justify-content-center">
-                            <div class="col-sm-5 mb-3 mb-sm-0">
-                                <div class="card text-bg-success">
-                                    <div class="card-body">
-                                        <h5 class="card-title" id="out-paddock-name"></h5>
-                                        <p class="card-text"> Area: <span class="card-text" id="out-paddock-area" style="text-decoration: underline; font-style: italic;"></span></p>
-                                        <p class="card-text"> Total DM: <span class="card-text" id="out-paddock-total" style="text-decoration: underline; font-style: italic;"></span></p>
-                                        <p class="card-text">Mob: <span class="card-text" id="out-mob-name" style="text-decoration: underline; font-style: italic;"></span></p>
-                                        <p class="card-text">Stocks: <span class="card-text" id="out-stocks" style="text-decoration: underline; font-style: italic;"></span></p>
-                                        <input type="hidden" name="source_id" class="card-text" id="out-paddock-id"></input>
+                    <form id="moveForm" action="/move" method="POST">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Paddock Movement Confirmation</h1>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row align-items-center justify-content-center">
+                                <div class="col-sm-5 mb-3 mb-sm-0">
+                                    <div class="card text-bg-success">
+                                        <div class="card-body">
+                                            <h5 class="card-title" id="out-paddock-name"></h5>
+                                            <p class="card-text"> Area: <span class="card-text" id="out-paddock-area" style="text-decoration: underline; font-style: italic;"></span></p>
+                                            <p class="card-text"> Total DM: <span class="card-text" id="out-paddock-total" style="text-decoration: underline; font-style: italic;"></span></p>
+                                            <p class="card-text">Mob: <span class="card-text" id="out-mob-name" style="text-decoration: underline; font-style: italic;"></span></p>
+                                            <p class="card-text">Stocks: <span class="card-text" id="out-stocks" style="text-decoration: underline; font-style: italic;"></span></p>
+                                            <input type="hidden" name="source_id" class="card-text" id="out-paddock-id">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-1 mb-3 mb-sm-0">
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <span class="mx-2">&#8594;</span>
+                                <div class="col-sm-1 mb-3 mb-sm-0">
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <span class="mx-2">&#8594;</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-5 mb-3 mb-sm-0">
-                                <div class="card text-bg-success">
-                                    <div class="card-body">
-                                        <h5 class="card-title" id="in-paddock-name"></h5>
-                                        <p class="card-text"> Area: <span class="card-text" id="in-paddock-area" style="text-decoration: underline; font-style: italic;"></span></p>
-                                        <p class="card-text"> Total DM: <span class="card-text" id="in-paddock-total" style="text-decoration: underline; font-style: italic;"></span></p>
-                                        <p class="card-text"><span class="card-text" id="in-mob-name" style="text-decoration: underline; font-style: italic;">&nbsp;</span></p>
-                                        <p class="card-text"><span class="card-text" id="in-stocks" style="text-decoration: underline; font-style: italic;">&nbsp;</span></p>
-                                        <input type="hidden" name="target_id" class="card-text" id="in-paddock-id"></input>
+                                <div class="col-sm-5 mb-3 mb-sm-0">
+                                    <div class="card text-bg-success">
+                                        <div class="card-body">
+                                            <h5 class="card-title" id="in-paddock-name"></h5>
+                                            <p class="card-text"> Area: <span class="card-text" id="in-paddock-area" style="text-decoration: underline; font-style: italic;"></span></p>
+                                            <p class="card-text"> Total DM: <span class="card-text" id="in-paddock-total" style="text-decoration: underline; font-style: italic;"></span></p>
+                                            <p class="card-text"><span class="card-text" id="in-mob-name" style="text-decoration: underline; font-style: italic;">&nbsp;</span></p>
+                                            <p class="card-text"><span class="card-text" id="in-stocks" style="text-decoration: underline; font-style: italic;">&nbsp;</span></p>
+                                            <input type="hidden" name="target_id" class="card-text" id="in-paddock-id">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-info">Submit</button>
-                    </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-info">Submit</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -135,14 +137,14 @@
                 selectedRows.set('out', build_data_map(row));
                 
                 document.getElementById('out-paddock-name').innerText = selectedRows.get('out').get('paddock_name')
-                document.getElementById('out-paddock-id').innerText = selectedRows.get('out').get('paddock_id')
+                document.getElementById('out-paddock-id').value = selectedRows.get('out').get('paddock_id')
                 document.getElementById('out-paddock-area').innerText = selectedRows.get('out').get('paddock_area')
                 document.getElementById('out-paddock-total').innerText = selectedRows.get('out').get('paddock_total')
                 document.getElementById('out-mob-name').innerText = selectedRows.get('out').get('mob_name')
                 document.getElementById('out-stocks').innerText = selectedRows.get('out').get('mob_stock')
 
                 document.getElementById('in-paddock-name').innerText = selectedRows.get('in').get('paddock_name')
-                document.getElementById('in-paddock-id').innerText = selectedRows.get('in').get('paddock_id')
+                document.getElementById('in-paddock-id').value = selectedRows.get('in').get('paddock_id')
                 document.getElementById('in-paddock-area').innerText = selectedRows.get('in').get('paddock_area')
                 document.getElementById('in-paddock-total').innerText = selectedRows.get('in').get('paddock_total')
 

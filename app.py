@@ -112,11 +112,12 @@ def paddocks() -> str:
     """
     List paddock details.
     """
+    g.page = "paddocks"
     cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
     query: str = "SELECT a.*, b.name as mob_name, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id ORDER BY a.name ASC;"
     cur.execute(query)
     paddocks: List[Dict[str. Any]] = cur.fetchall()
-    data: Dict[str, Any] = {"page": "paddocks", "paddocks": paddocks}
+    data: Dict[str, Any] = {"page": g.page, "paddocks": paddocks}
     return render_template("paddocks.html", data = data)
 
 @app.post("/move")
@@ -124,17 +125,21 @@ def move_paddocks() -> str:
     """
     move between different paddocks
     """
-    source_id: int = int(request.form().get("source_id"))
-    target_id: int = int(request.form().get("target_id"))
-    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
-    target_check_query: str = "SELECT * FROM paddocks"
+    g.page = "paddocks"
+    source_id: int = int(request.form.get("source_id"))
+    target_id: int = int(request.form.get("target_id"))
+    # cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    # target_check_query: str = "SELECT * FROM paddocks"
+    return redirect(url_for('paddocks'))
     
 @app.errorhandler(Exception)
 def unknown_error_handler(exp: Exception) -> str:
     """
     handle global exception, in this case catch base exception only and return the same error page
     """
-    return render_template("error.html")
+    print(exp)
+    data = {"page": g.page}
+    return render_template("error.html", data = data)
 
 
 if __name__ == "__main__":
