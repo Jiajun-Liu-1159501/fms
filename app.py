@@ -1,4 +1,7 @@
-from decimal import Decimal
+from curses import delay_output
+from decimal import ROUND_HALF_UP, Decimal
+import decimal
+import re
 from flask import Flask, Response, g
 from flask import render_template
 from flask import request
@@ -128,16 +131,11 @@ def add_paddocks() -> str:
     """
     g.page = "paddocks"
     paddock_name: str = request.form.get("paddock_name")
-    print(paddock_name)
-    # cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
-    # paddock_valid_query: str = "SELECT COUNT(1) as count FROM paddocks WHERE id = %s;"   # make sure two paddocks exist
-    # cur.execute(paddock_valid_query, paddock_id)
-    # if cur.fetchone()['count'] != 1:
-    #     raise Exception("invalid paddock id submitted")
-    # name: str = request.form.get("paddock_name")
-    # area: Decimal = Decimal(request.form.get("paddock_area"))
-    # update_statement = "UPDATE paddocks SET name = %s, area = %s, total_dm = %s WHERE paddock_id = %s;"
-    # cur.execute(update_statement, None)
+    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    paddock_area: Decimal = Decimal(request.form.get("paddock_area"))
+    paddock_dh: Decimal = Decimal(request.form.get("paddock_dm"))
+    update_statement = "INSERT INTO paddocks (name, area, dm_per_ha, total_dm) VALUES (%s, %s, %s, %s);"
+    cur.execute(update_statement, [paddock_name, paddock_area, paddock_dh, _calculate_total_dm(paddock_area, paddock_dh)])
     return redirect(url_for("paddocks"))
 
 @app.post("/paddcoks/edit")
@@ -146,19 +144,17 @@ def edit_paddocks() -> str:
     edit a paddock
     """
     g.page = "paddocks"
-    paddock_id: int = request.form.get("paddock_id")
+    paddock_id: int = int(request.form.get("paddock_id"))
+    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    paddock_valid_query: str = "SELECT COUNT(1) as count FROM paddocks WHERE id = %s;"   # make sure two paddocks exist
+    cur.execute(paddock_valid_query, [paddock_id])
+    if cur.fetchone()['count'] != 1:
+        raise Exception("invalid paddock id submitted")
     paddock_name: str = request.form.get("paddock_name")
-    print(paddock_id)
-    print(paddock_name)
-    # cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
-    # paddock_valid_query: str = "SELECT COUNT(1) as count FROM paddocks WHERE id = %s;"   # make sure two paddocks exist
-    # cur.execute(paddock_valid_query, paddock_id)
-    # if cur.fetchone()['count'] != 1:
-    #     raise Exception("invalid paddock id submitted")
-    # name: str = request.form.get("paddock_name")
-    # area: Decimal = Decimal(request.form.get("paddock_area"))
-    # update_statement = "UPDATE paddocks SET name = %s, area = %s, total_dm = %s WHERE paddock_id = %s;"
-    # cur.execute(update_statement, None)
+    paddock_area: Decimal = Decimal(request.form.get("paddock_area"))
+    paddock_dh: Decimal = Decimal(request.form.get("paddock_dm"))
+    update_statement = "UPDATE paddocks SET name = %s, area = %s, dm_per_ha = %s, total_dm = %s WHERE id = %s;"
+    cur.execute(update_statement, [paddock_name, paddock_area, paddock_dh, _calculate_total_dm(paddock_area, paddock_dh), paddock_id])
     return redirect(url_for("paddocks"))
 
 @app.post("/paddcoks/move")
@@ -167,7 +163,7 @@ def move_paddocks() -> str:
     move between different paddocks
     """
     g.page = "paddocks"
-    params: Tuple[int] = (int(request.form.get("target_id")), int(request.form.get("source_id")))
+    params: List[int] = [int(request.form.get("target_id")), int(request.form.get("source_id"))]
     cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
     paddock_valid_query: str = "SELECT COUNT(1) as count FROM paddocks WHERE id IN (%s , %s);"   # make sure two paddocks exist
     cur.execute(paddock_valid_query, params)
@@ -186,6 +182,9 @@ def unknown_error_handler(exp: Exception) -> str:
     data = {"page": g.page}
     return render_template("error.html", data = data)
 
+def _calculate_total_dm(area: Decimal, dh: Decimal) -> Decimal:
+    total_dm: Decimal = area * dh
+    return total_dm.quantize(Decimal('0.0'), rounding = ROUND_HALF_UP)
 
 if __name__ == "__main__":
     app.run()

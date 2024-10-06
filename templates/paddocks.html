@@ -57,7 +57,7 @@
                         <td scope="row">{{paddock['sotck_num']}}</td>
                         <td scope="row" class="bg-transparent">
                             <button type="button" class="btn btn-warning edit_button" onclick="handle_edit(this)">Edit</button>
-                            <button type="button" class="btn btn-info {{'d-none' if paddock['mob_name'] else ''}}" onclick="handle_move_in(this)">Move In</button>
+                            <button type="button" class="btn btn-info move_in_button {{'d-none' if paddock['mob_name'] else ''}}" data-can-move-in="{{'false' if paddock['mob_name'] else 'true'}}" onclick="handle_move_in(this)">Move In</button>
                             <button type="button" class="btn btn-danger d-none" onclick="cancel_move(this)">Cancel Move</button>
                             <button type="button" class="btn btn-info d-none move_out_button" data-can-move-out="{{'true' if paddock['mob_name'] else 'false'}}" onclick="handle_move_out(this)">Move Out</button>
                         </td>
@@ -133,13 +133,13 @@
                             <div class="mb-3 row">
                                 <label for="edit-name-input" class="col-sm-4 col-form-label text-success">Paddock Name</label>
                                 <div class="col-sm-8">
-                                    <input type="text" required class="form-control" id="edit-name-input" name="paddock_name">
+                                    <input type="text" required class="form-control" id="edit-name-input" name="paddock_name" pattern=".*\S.*">
                                 </div>
                             </div>
                             <div class="mb-3 row">
                                 <label for="edit-area-input-text" class="col-sm-4 col-form-label text-success">Paddock Area (HA)</label>
                                 <div class="col-sm-8">
-                                    <input type="text" required class="form-control" id="edit-area-input-text" name="paddock_area" oninput="document.getElementById('edit-area-input-range').value = this.value">
+                                    <input type="text" required class="form-control" id="edit-area-input-text" name="paddock_area" pattern="^([1-9][0-9]*)+(\.[0-9]{1,2})?$" oninput="document.getElementById('edit-area-input-range').value = this.value">
                                 </div>
                             </div>
                             <div class="mb-3 row">
@@ -156,7 +156,7 @@
                             <div class="mb-3 row">
                                 <label for="edit-dm-input-text" class="col-sm-4 col-form-label text-success">DM / HA (KG/HA)</label>
                                 <div class="col-sm-8">
-                                    <input type="text" required class="form-control" id="edit-dm-input-text" name="paddock_dm" oninput="document.getElementById('edit-dm-input-range').value = this.value">
+                                    <input type="text" required class="form-control" id="edit-dm-input-text" name="paddock_dm" pattern="^([1-9][0-9]*)+(\.[0-9]{1,2})?$" oninput="document.getElementById('edit-dm-input-range').value = this.value">
                                 </div>
                             </div>
                             <div class="mb-3 row">
@@ -197,7 +197,7 @@
                             <div class="mb-3 row">
                                 <label for="add-area-input-text" class="col-sm-4 col-form-label text-success">Paddock Area (HA)</label>
                                 <div class="col-sm-8">
-                                    <input type="text" required class="form-control" id="add-area-input-text" value="" placeholder="Enter value or drag slider below" name="paddock_area" oninput="document.getElementById('add-area-input-range').value = this.value">
+                                    <input type="text" required class="form-control" id="add-area-input-text" value="" placeholder="Enter value or drag slider below" name="paddock_area" pattern="^([1-9][0-9]*)+(\.[0-9]{1,2})?$" oninput="document.getElementById('add-area-input-range').value = this.value">
                                 </div>
                             </div>
                             <div class="mb-3 row">
@@ -214,7 +214,7 @@
                             <div class="mb-3 row">
                                 <label for="add-dm-input-text" class="col-sm-4 col-form-label text-success">DM / HA (KG/HA)</label>
                                 <div class="col-sm-8">
-                                    <input type="text" required class="form-control" id="add-dm-input-text" placeholder="Enter value or drag slider below" name="paddock_dm" oninput="document.getElementById('add-dm-input-range').value = this.value">
+                                    <input type="text" required class="form-control" id="add-dm-input-text" placeholder="Enter value or drag slider below" name="paddock_dm" pattern="^([1-9][0-9]*)+(\.[0-9]{1,2})?$" oninput="document.getElementById('add-dm-input-range').value = this.value">
                                 </div>
                             </div>
                             <div class="mb-3 row">
@@ -247,7 +247,7 @@
                 const row = button.closest('tr');
                 const buttons = row.querySelectorAll('button');
                 document.querySelectorAll('.edit_button').forEach(btn => btn.disabled = true);    //disable all edit button
-                buttons[1].classList.add('d-none');     //hide current move in button
+                document.querySelectorAll('.move_in_button').forEach(btn => btn.classList.add('d-none'))
                 buttons[2].classList.remove('d-none');     //show move cancel button
                 document.querySelectorAll('.move_out_button').forEach(btn => {
                     if (btn.getAttribute('data-can-move-out') == 'true') {
@@ -287,7 +287,10 @@
             function reset_buttons(row) {
                 const buttons = row.querySelectorAll('button');
                 document.querySelectorAll('.edit_button').forEach(btn => btn.disabled = false)    //enable all edit button
-                buttons[1].classList.remove('d-none');     //hide current move in button
+                document.querySelectorAll('.move_in_button').forEach(btn => {
+                    if (btn.getAttribute('data-can-move-in') == 'true')
+                        btn.classList.remove('d-none');
+                });
                 buttons[2].classList.add('d-none');     //show move cancel button
                 document.querySelectorAll('.move_out_button').forEach(btn => {
                     if (btn.getAttribute('data-can-move-out') == 'true') {
