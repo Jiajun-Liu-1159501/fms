@@ -135,7 +135,7 @@ def unknown_error_handler(exp: Exception) -> str:
     handle global exception, in this case catch base exception only and return the same error page
     """
     return render_template("error.html")
-    
+
 
 if __name__ == "__main__":
     app.run()
