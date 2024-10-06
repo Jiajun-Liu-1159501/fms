@@ -124,6 +124,19 @@ def paddocks() -> str:
     data: Dict[str, Any] = {"page": g.page, "paddocks": paddocks}
     return render_template("paddocks.html", data = data)
 
+@app.get("/predict")
+def predict() -> str:
+    """
+    List paddock details.
+    """
+    g.page = "predict"
+    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    query: str = "SELECT a.*, b.name as mob_name, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id ORDER BY a.name ASC;"
+    cur.execute(query)
+    paddocks: List[Dict[str. Any]] = cur.fetchall()
+    data: Dict[str, Any] = {"page": g.page, "paddocks": paddocks}
+    return render_template("predict.html", data = data)
+
 @app.post("/paddcoks/add")
 def add_paddocks() -> str:
     """
@@ -172,6 +185,11 @@ def move_paddocks() -> str:
     update_statement: str = "UPDATE mobs SET paddock_id = %s WHERE paddock_id = %s;"
     cur.execute(update_statement, params)
     return redirect(url_for("paddocks"))
+
+@app.post("/paddcoks/next_day")
+def move_next_day() -> str:
+    return redirect(url_for("predict"))
+
     
 @app.errorhandler(Exception)
 def unknown_error_handler(exp: Exception) -> str:

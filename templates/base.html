@@ -43,6 +43,9 @@
             <a class="nav-link {{'active bg-success text-white' if data['page'] == 'paddocks' else 'text-success'}}" id="mob-pill" href="{{url_for('paddocks')}}"><strong>Paddocks</strong></a>
           </li>
           <li class="nav-item">
+            <a class="nav-link {{'active bg-success text-white' if data['page'] == 'predict' else 'text-success'}}" id="mob-pill" href="{{url_for('predict')}}"><strong>Paddock predict</strong></a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link {{'active bg-success text-white' if data['page'] == 'stocks' else 'text-success'}}" id="mob-pill" href="{{url_for('stocks')}}"><strong>Stocks</strong></a>
           </li>
         </ul>
