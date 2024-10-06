@@ -52,7 +52,7 @@
                         <td scope="row">{{paddock['mob_name'] if paddock['mob_name'] else ''}}</td>   
                         <td scope="row">{{paddock['sotck_num']}}</td>
                         <td scope="row" class="bg-transparent">
-                            <button type="button" class="btn btn-warning edit_button">Edit</button>
+                            <button type="button" class="btn btn-warning edit_button" onclick="handle_edit(this)">Edit</button>
                             <button type="button" class="btn btn-info {{'d-none' if paddock['mob_name'] else ''}}" onclick="handle_move_in(this)">Move In</button>
                             <button type="button" class="btn btn-danger d-none" onclick="cancel_move(this)">Cancel Move</button>
                             <button type="button" class="btn btn-info d-none move_out_button" data-can-move-out="{{'true' if paddock['mob_name'] else 'false'}}" onclick="handle_move_out(this)">Move Out</button>
@@ -63,12 +63,12 @@
             </tbody>    
         </table>
 
-        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal fade" id="move-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="move-modal-title" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered w-auto">
                 <div class="modal-content">
-                    <form id="moveForm" action="/move" method="POST">
+                    <form id="moveForm" action="/paddcoks/move" method="POST">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Paddock Movement Confirmation</h1>
+                            <h1 class="modal-title fs-5" id="move-modal-title">Paddock Movement Confirmation</h1>
                         </div>
                         <div class="modal-body">
                             <div class="row align-items-center justify-content-center">
@@ -76,8 +76,8 @@
                                     <div class="card text-bg-success">
                                         <div class="card-body">
                                             <h5 class="card-title" id="out-paddock-name"></h5>
-                                            <p class="card-text"> Area: <span class="card-text" id="out-paddock-area" style="text-decoration: underline; font-style: italic;"></span></p>
-                                            <p class="card-text"> Total DM: <span class="card-text" id="out-paddock-total" style="text-decoration: underline; font-style: italic;"></span></p>
+                                            <p class="card-text">Area: <span class="card-text" id="out-paddock-area" style="text-decoration: underline; font-style: italic;"></span></p>
+                                            <p class="card-text">Total DM: <span class="card-text" id="out-paddock-total" style="text-decoration: underline; font-style: italic;"></span></p>
                                             <p class="card-text">Mob: <span class="card-text" id="out-mob-name" style="text-decoration: underline; font-style: italic;"></span></p>
                                             <p class="card-text">Stocks: <span class="card-text" id="out-stocks" style="text-decoration: underline; font-style: italic;"></span></p>
                                             <input type="hidden" name="source_id" class="card-text" id="out-paddock-id">
@@ -93,8 +93,8 @@
                                     <div class="card text-bg-success">
                                         <div class="card-body">
                                             <h5 class="card-title" id="in-paddock-name"></h5>
-                                            <p class="card-text"> Area: <span class="card-text" id="in-paddock-area" style="text-decoration: underline; font-style: italic;"></span></p>
-                                            <p class="card-text"> Total DM: <span class="card-text" id="in-paddock-total" style="text-decoration: underline; font-style: italic;"></span></p>
+                                            <p class="card-text">Area: <span class="card-text" id="in-paddock-area" style="text-decoration: underline; font-style: italic;"></span></p>
+                                            <p class="card-text">Total DM: <span class="card-text" id="in-paddock-total" style="text-decoration: underline; font-style: italic;"></span></p>
                                             <p class="card-text"><span class="card-text" id="in-mob-name" style="text-decoration: underline; font-style: italic;">&nbsp;</span></p>
                                             <p class="card-text"><span class="card-text" id="in-stocks" style="text-decoration: underline; font-style: italic;">&nbsp;</span></p>
                                             <input type="hidden" name="target_id" class="card-text" id="in-paddock-id">
@@ -112,6 +112,25 @@
             </div>
         </div>
         
+        <div class="modal fade" id="edit-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="edit-modal-title" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered w-auto">
+                <div class="modal-content">
+                    <form id="editForm" action="/paddcoks/edit" method="POST">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="edit-modal-title">Paddock Editing</h1>
+                        </div>
+                        <div class="modal-body">
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-warning">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <script>
 
             let selectedRows = new Map();
@@ -148,7 +167,7 @@
                 document.getElementById('in-paddock-area').innerText = selectedRows.get('in').get('paddock_area')
                 document.getElementById('in-paddock-total').innerText = selectedRows.get('in').get('paddock_total')
 
-                const modal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+                const modal = new bootstrap.Modal(document.getElementById('move-modal'));
                 modal.show();
                 reset_buttons(target_row)
             }
@@ -179,6 +198,11 @@
                 target_map.set('mob_name', row.cells[5].innerText)
                 target_map.set('mob_stock', row.cells[6].innerText)
                 return target_map;
+            }
+
+            function handle_edit(button) {
+                const modal = new bootstrap.Modal(document.getElementById('edit-modal'));
+                modal.show();
             }
 
         </script>

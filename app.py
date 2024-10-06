@@ -1,4 +1,4 @@
-from flask import Flask, Response, g, jsonify
+from flask import Flask, Response, g
 from flask import render_template
 from flask import request
 from flask import redirect
@@ -6,7 +6,7 @@ from flask import url_for
 from flask import session
 from datetime import date, datetime, timedelta
 import connect
-from typing import Any, Dict, Generic, List, TypeVar, Callable
+from typing import Any, Dict, Generic, List, TypeVar, Callable, Tuple
 from mysql.connector import pooling, cursor
 
 
@@ -120,17 +120,37 @@ def paddocks() -> str:
     data: Dict[str, Any] = {"page": g.page, "paddocks": paddocks}
     return render_template("paddocks.html", data = data)
 
-@app.post("/move")
+@app.post("/paddcoks/edit")
+def edit_paddocks() -> str:
+    """
+    edit a paddock
+    """
+    g.page = "paddocks"
+    params: Tuple[int] = (int(request.form.get("target_id")), int(request.form.get("source_id")))
+    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    paddock_valid_query = "SELECT COUNT(1) as count FROM paddocks WHERE id IN (%s , %s);"   # make sure two paddocks exist
+    cur.execute(paddock_valid_query, params)
+    if cur.fetchone()['count'] != 2:
+        raise Exception("invalid paddock id submitted")
+    update_statement = "UPDATE mobs SET paddock_id = %s WHERE paddock_id = %s;"
+    cur.execute(update_statement, params)
+    return redirect(url_for("paddocks"))
+
+@app.post("/paddcoks/move")
 def move_paddocks() -> str:
     """
     move between different paddocks
     """
     g.page = "paddocks"
-    source_id: int = int(request.form.get("source_id"))
-    target_id: int = int(request.form.get("target_id"))
-    # cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
-    # target_check_query: str = "SELECT * FROM paddocks"
-    return redirect(url_for('paddocks'))
+    params: Tuple[int] = (int(request.form.get("target_id")), int(request.form.get("source_id")))
+    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    paddock_valid_query = "SELECT COUNT(1) as count FROM paddocks WHERE id IN (%s , %s);"   # make sure two paddocks exist
+    cur.execute(paddock_valid_query, params)
+    if cur.fetchone()['count'] != 2:
+        raise Exception("invalid paddock id submitted")
+    update_statement = "UPDATE mobs SET paddock_id = %s WHERE paddock_id = %s;"
+    cur.execute(update_statement, params)
+    return redirect(url_for("paddocks"))
     
 @app.errorhandler(Exception)
 def unknown_error_handler(exp: Exception) -> str:
