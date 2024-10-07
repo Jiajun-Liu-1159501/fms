@@ -76,7 +76,7 @@ def reset() -> str:
         mqstr: str = f.read()
         for qstr in mqstr.split(";"):
             cur.execute(qstr)
-    return redirect(url_for('paddocks'))
+    return redirect(url_for('home'))
 
 @app.get("/mobs")
 def mobs() -> str:
