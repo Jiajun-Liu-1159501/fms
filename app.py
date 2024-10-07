@@ -4,7 +4,7 @@ from flask import render_template
 from flask import request
 from flask import redirect
 from flask import url_for
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 import connect
 from typing import Any, Dict, List
 from mysql.connector import pooling, cursor
@@ -202,7 +202,7 @@ def move_next_day() -> str:
 	        SELECT d.paddock_id as paddock_id, d.total_dm as total_dm, ROUND(d.paddock_area * %s - d.sotck_num * %s, 2) as consumption FROM (
 		        SELECT a.id as paddock_id, a.area as paddock_area, a.total_dm as total_dm, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id
 	        ) as d
-        ) as f ON e.id = f.paddock_id SET e.total_dm = e.total_dm + f.consumption, e.dm_per_ha = ROUND((e.total_dm + f.consumption) / e.area, 2)
+        ) as f ON e.id = f.paddock_id SET e.total_dm = e.total_dm + f.consumption, e.dm_per_ha = ROUND((e.total_dm + f.consumption) / e.area, 2);
     """ # this update values can be calculated is MySQL server, no need to calculate in memory. 
     # Directly executing this statement only requires one I/O, select first then update need twice.
     cur.execute(update_paddock_statement, [pasture_growth_rate, stock_consumption_rate])
