@@ -65,7 +65,6 @@ def home() -> str:
     data: Dict[str, Any] = {"page": g.page, "curr_date": get_date(cur)}
     return render_template("home.html", data = data)
 
-
 @app.route("/reset")
 def reset() -> str:
     """
@@ -203,12 +202,10 @@ def move_next_day() -> str:
 		        SELECT a.id as paddock_id, a.area as paddock_area, a.total_dm as total_dm, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id
 	        ) as d
         ) as f ON e.id = f.paddock_id SET e.total_dm = e.total_dm + f.consumption, e.dm_per_ha = ROUND((e.total_dm + f.consumption) / e.area, 2);
-    """ # this update values can be calculated is MySQL server, no need to calculate in memory. 
+    """ # all the values to be updated can be calculated is MySQL server, no need to calculate in memory. 
     # Directly executing this statement only requires one I/O, select first then update need twice.
     cur.execute(update_paddock_statement, [pasture_growth_rate, stock_consumption_rate])
     return redirect(url_for("paddocks"))
-
-
     
 @app.errorhandler(Exception)
 def unknown_error_handler(exp: Exception) -> str:
