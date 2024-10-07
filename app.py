@@ -7,8 +7,9 @@ from flask import url_for
 from flask import session
 from datetime import date, datetime, timedelta
 import connect
-from typing import Any, Dict, Generic, List, TypeVar, Callable, Tuple
+from typing import Any, Dict, List
 from mysql.connector import pooling, cursor
+from pathlib import Path
 
 
 app = Flask(__name__)
@@ -52,28 +53,31 @@ def do_after(response: Response) -> None:
     connection.close() # close() method will return the connection to the pool, not closing a connection
     return response
 
-@app.route("/")
-def home():
-    if 'curr_date' not in session:
-        session.update({'curr_date': start_date})
-    data: Dict[str, Any] = {"page": "home"} 
+def get_date(cursor: cursor.MySQLCursor) -> date:   
+    qstr: str = "SELECT curr_date FROM curr_date;"  
+    cursor.execute(qstr)        
+    curr_date: date = cursor.fetchone()['curr_date']        
+    return curr_date
+
+@app.get("/")
+def home() -> str:
+    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    data: Dict[str, Any] = {"page": "home", "date": get_date(cur)}
     return render_template("home.html", data = data)
 
-@app.route("/clear-date")
-def clear_date():
-    """
-    Clear session['curr_date']. Removes 'curr_date' from session dictionary.
-    """
-    session.pop('curr_date')
-    return redirect(url_for('paddocks'))  
 
-@app.route("/reset-date")
-def reset_date():
+@app.route("/reset")
+def reset() -> str:
     """
-    Reset session['curr_date'] to the project start_date value.
+    Reset data to original state.
     """
-    session.update({'curr_date': start_date})
-    return redirect(url_for('paddocks'))  
+    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    THIS_FOLDER = Path(__file__).parent.resolve()
+    with open(THIS_FOLDER / 'fms-reset.sql', 'r') as f:
+        mqstr = f.read()
+        for qstr in mqstr.split(";"):
+            cur.execute(qstr)
+    return redirect(url_for('paddocks'))
 
 @app.get("/mobs")
 def mobs() -> str:
@@ -183,6 +187,7 @@ def move_paddocks() -> str:
 
 @app.post("/paddcoks/next_day")
 def move_next_day() -> str:
+
     return redirect(url_for("paddocks"))
 
     
