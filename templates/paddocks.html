@@ -17,14 +17,17 @@
         </div>
         
         <h4 class="mb-3">Paddock List:</h4>
-        
-        <button class="btn btn-success mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#table_collapse" aria-expanded="false" aria-controls="table_collapse" onclick="this.innerHTML = this.getAttribute('aria-expanded') === 'false' ? 'Expand Table' : 'Collapse Table'">
-            Collapse Table
-        </button>
 
-        <button class="btn btn-success mb-3" type="button" data-bs-toggle="modal" data-bs-target="#add-modal">
-            Add Paddock
-        </button>
+        <form id="nextDayForm" action="/paddcoks/next_day" method="POST">
+            <button class="btn btn-success mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#table_collapse" aria-expanded="false" aria-controls="table_collapse" onclick="this.innerHTML = this.getAttribute('aria-expanded') === 'false' ? 'Expand Table' : 'Collapse Table'">
+                Collapse Table
+            </button>
+    
+            <button class="btn btn-success mb-3" type="button" data-bs-toggle="modal" data-bs-target="#add-modal">
+                Add Paddock
+            </button>
+            <button class="btn btn-success mb-3" type="submit">Move to Next Day</button>
+        </form>
         
         <table class="table" style="table-layout: fixed;">
             <thead>
@@ -124,25 +127,28 @@
                             <h1 class="modal-title fs-5 text-success" id="edit-modal-title">Paddock Editing</h1>
                         </div>
                         <div class="modal-body">
-                            <div class="mb-3 row">
+                            <div class="mb-3 row align-items-center">
                                 <label for="edit-id-input" class="col-sm-4 col-form-label text-success">Paddock ID</label>
-                                <div class="col-sm-8">
-                                    <input type="text" readonly class="form-control-plaintext text-secondary" id="edit-id-input" name="paddock_id">
+                                <div class="col-sm-2">
+                                    <input type="text" readonly class="form-control-plaintext text-secondary" id="edit-id-input" name="paddock_id" style="font-weight: bold;">
+                                </div>
+                                <div class="col-sm-6">
+                                    <span class="form-text text-warning">This field is not editable</span>
                                 </div>
                             </div>
-                            <div class="mb-3 row">
+                            <div class="mb-3 row align-items-center">
                                 <label for="edit-name-input" class="col-sm-4 col-form-label text-success">Paddock Name</label>
                                 <div class="col-sm-8">
                                     <input type="text" required class="form-control" id="edit-name-input" name="paddock_name" pattern=".*\S.*">
                                 </div>
                             </div>
-                            <div class="mb-3 row">
+                            <div class="mb-3 row align-items-center">
                                 <label for="edit-area-input-text" class="col-sm-4 col-form-label text-success">Paddock Area (HA)</label>
                                 <div class="col-sm-8">
                                     <input type="text" required class="form-control" id="edit-area-input-text" name="paddock_area" pattern="^([1-9][0-9]*)+(\.[0-9]{1,2})?$" oninput="document.getElementById('edit-area-input-range').value = this.value">
                                 </div>
                             </div>
-                            <div class="mb-3 row">
+                            <div class="mb-3 row align-items-center">
                                 <div class="col-sm-1">
                                     <span class="form-text text-success">0</span> 
                                 </div>
@@ -153,13 +159,13 @@
                                     <span class="form-text text-success">10</span> 
                                 </div>
                             </div>
-                            <div class="mb-3 row">
+                            <div class="mb-3 row align-items-center">
                                 <label for="edit-dm-input-text" class="col-sm-4 col-form-label text-success">DM / HA (KG/HA)</label>
                                 <div class="col-sm-8">
                                     <input type="text" required class="form-control" id="edit-dm-input-text" name="paddock_dm" pattern="^([1-9][0-9]*)+(\.[0-9]{1,2})?$" oninput="document.getElementById('edit-dm-input-range').value = this.value">
                                 </div>
                             </div>
-                            <div class="mb-3 row">
+                            <div class="mb-3 row align-items-center">
                                 <div class="col-sm-1">
                                     <span class="form-text text-success">0</span> 
                                 </div>
@@ -188,19 +194,19 @@
                             <h1 class="modal-title fs-5 text-success" id="add-modal-title">Paddock Adding</h1>
                         </div>
                         <div class="modal-body">
-                            <div class="mb-3 row">
+                            <div class="mb-3 row align-items-center">
                                 <label for="add-name-input" class="col-sm-4 col-form-label text-success">Paddock Name</label>
                                 <div class="col-sm-8">
                                     <input type="text" required class="form-control" id="add-name-input" value="" placeholder="Please enter a paddock name" name="paddock_name">
                                 </div>
                             </div>
-                            <div class="mb-3 row">
+                            <div class="mb-3 row align-items-center">
                                 <label for="add-area-input-text" class="col-sm-4 col-form-label text-success">Paddock Area (HA)</label>
                                 <div class="col-sm-8">
                                     <input type="text" required class="form-control" id="add-area-input-text" value="" placeholder="Enter value or drag slider below" name="paddock_area" pattern="^([1-9][0-9]*)+(\.[0-9]{1,2})?$" oninput="document.getElementById('add-area-input-range').value = this.value">
                                 </div>
                             </div>
-                            <div class="mb-3 row">
+                            <div class="mb-3 row align-items-center">
                                 <div class="col-sm-1">
                                     <span class="form-text text-success">0</span> 
                                 </div>
@@ -211,13 +217,13 @@
                                     <span class="form-text text-success">10</span> 
                                 </div>
                             </div>
-                            <div class="mb-3 row">
+                            <div class="mb-3 row align-items-center">
                                 <label for="add-dm-input-text" class="col-sm-4 col-form-label text-success">DM / HA (KG/HA)</label>
                                 <div class="col-sm-8">
                                     <input type="text" required class="form-control" id="add-dm-input-text" placeholder="Enter value or drag slider below" name="paddock_dm" pattern="^([1-9][0-9]*)+(\.[0-9]{1,2})?$" oninput="document.getElementById('add-dm-input-range').value = this.value">
                                 </div>
                             </div>
-                            <div class="mb-3 row">
+                            <div class="mb-3 row align-items-center">
                                 <div class="col-sm-1">
                                     <span class="form-text text-success">0</span> 
                                 </div>
