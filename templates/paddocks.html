@@ -44,9 +44,9 @@
             </thead>
             <tbody class="collapse show", id="table_collapse">
             {% for paddock in data['paddocks'] %}
-                {% if paddock['dm_per_ha'] <= 1500 %}  
+                {% if paddock['dm_per_ha'] < 1500 %}  
                     <tr class="table-danger">
-                {% elif paddock['dm_per_ha'] <= 1800 %}
+                {% elif paddock['dm_per_ha'] < 1800 %}
                     <tr class="table-warning">
                 {% else %}
                     <tr>
