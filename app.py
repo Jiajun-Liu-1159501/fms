@@ -212,7 +212,6 @@ def unknown_error_handler(exp: Exception) -> str:
     """
     handle global exception, in this case catch base exception only and return the same error page
     """
-    print(exp)
     data = {"page": g.page}
     return render_template("error.html", data = data)
 
