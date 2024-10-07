@@ -4,7 +4,6 @@ from flask import render_template
 from flask import request
 from flask import redirect
 from flask import url_for
-from flask import session
 from datetime import date, datetime, timedelta
 import connect
 from typing import Any, Dict, List
@@ -61,8 +60,9 @@ def get_date(cursor: cursor.MySQLCursor) -> date:
 
 @app.get("/")
 def home() -> str:
+    g.page = "home"
     cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
-    data: Dict[str, Any] = {"page": "home", "date": get_date(cur)}
+    data: Dict[str, Any] = {"page": g.page, "curr_date": get_date(cur)}
     return render_template("home.html", data = data)
 
 
@@ -74,7 +74,7 @@ def reset() -> str:
     cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
     THIS_FOLDER = Path(__file__).parent.resolve()
     with open(THIS_FOLDER / 'fms-reset.sql', 'r') as f:
-        mqstr = f.read()
+        mqstr: str = f.read()
         for qstr in mqstr.split(";"):
             cur.execute(qstr)
     return redirect(url_for('paddocks'))
@@ -84,11 +84,12 @@ def mobs() -> str:
     """
     List the mob details (excludes the stock in each mob).
     """
+    g.page = "mobs"
     cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
     query: str = "SELECT a.id, a.name as mob_name, b.name as paddock_name FROM mobs a LEFT JOIN paddocks b on a.paddock_id = b.id ORDER BY a.name ASC;"
     cur.execute(query)        
     mobs: List[Dict[str, Any]] = cur.fetchall()   
-    data: Dict[str, Any] = {"page": "mobs", "mobs": mobs}      
+    data: Dict[str, Any] = {"page": g.page, "curr_date": get_date(cur), "mobs": mobs}      
     return render_template("mobs.html", data = data)
 
 @app.get("/stocks")
@@ -96,7 +97,9 @@ def stocks() -> str:
     """
     List the mob details (excludes the stock in each mob).
     """
+    g.page = "stocks"
     cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    current_date: date = get_date(cur)
     mob_query: str = "SELECT a.id as mob_id, a.name as mob_name, a.paddock_id, b.name as paddock_name, b.area, b.dm_per_ha, b.total_dm FROM mobs a LEFT JOIN paddocks b ON a.paddock_id = b.id ORDER BY a.name;"
     cur.execute(mob_query)
     mob_dict: List[Dict[str, Any]] = cur.fetchall()
@@ -111,10 +114,10 @@ def stocks() -> str:
         total_sum: Decimal = Decimal(0.00)
         for stock in stocks:
             total_sum += Decimal(stock.get("weight"))
-            stock.setdefault("age", _calculate_age(stock.get("dob"), start_date.date()))
+            stock.setdefault("age", _calculate_age(stock.get("dob"), current_date))
         mob.setdefault("stocks", stocks)
         mob.setdefault("average_weight", (total_sum / len(stocks)).quantize(Decimal('0.00'), ROUND_HALF_UP))
-    data: Dict[str, Any] = {"page": "stocks", "mob_dict": mob_dict}    
+    data: Dict[str, Any] = {"page": g.page, "curr_date": current_date, "mob_dict": mob_dict}    
     return render_template("stocks.html", data = data)
 
 def _calculate_age(date_of_birth: date, current_date: date) -> int:
@@ -133,7 +136,7 @@ def paddocks() -> str:
     query: str = "SELECT a.*, b.name as mob_name, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id ORDER BY a.name ASC;"
     cur.execute(query)
     paddocks: List[Dict[str. Any]] = cur.fetchall()
-    data: Dict[str, Any] = {"page": g.page, "paddocks": paddocks}
+    data: Dict[str, Any] = {"page": g.page, "curr_date": get_date(cur), "paddocks": paddocks}
     return render_template("paddocks.html", data = data)
 
 @app.post("/paddcoks/add")
@@ -187,8 +190,24 @@ def move_paddocks() -> str:
 
 @app.post("/paddcoks/next_day")
 def move_next_day() -> str:
-
+    """
+    Move to next day, update table curr_date and table paddock, recalculate Total DM and DM/HA
+    """
+    g.page = "paddocks"
+    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    update_date_statement: str = "UPDATE curr_date SET curr_date = DATE_ADD(curr_date, INTERVAL 1 DAY);" #update curr_date table immidiertly using build-in SQL functon
+    cur.execute(update_date_statement)
+    update_paddock_statement: str = """ 
+        UPDATE paddocks e JOIN (
+	        SELECT d.paddock_id as paddock_id, d.total_dm as total_dm, ROUND(d.paddock_area * %s - d.sotck_num * %s, 2) as consumption FROM (
+		        SELECT a.id as paddock_id, a.area as paddock_area, a.total_dm as total_dm, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id
+	        ) as d
+        ) as f ON e.id = f.paddock_id SET e.total_dm = e.total_dm + f.consumption, e.dm_per_ha = ROUND((e.total_dm + f.consumption) / e.area, 2)
+    """ # this update values can be calculated is MySQL server, no need to calculate in memory. 
+    # Directly executing this statement only requires one I/O, select first then update need twice.
+    cur.execute(update_paddock_statement, [pasture_growth_rate, stock_consumption_rate])
     return redirect(url_for("paddocks"))
+
 
     
 @app.errorhandler(Exception)
