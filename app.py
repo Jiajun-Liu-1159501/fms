@@ -4,7 +4,7 @@ from flask import render_template
 from flask import request
 from flask import redirect
 from flask import url_for
-from datetime import date, datetime
+from datetime import date
 import connect, logging, uuid
 from typing import Any, Dict, List
 from mysql.connector import pooling, cursor
