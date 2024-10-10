@@ -74,19 +74,6 @@ def home() -> str:
     data: Dict[str, Any] = {"page": g.page, "curr_date": get_date(cur)} # the 'page' param in data is used for holding the menu item selection
     return render_template("home.html", data = data)
 
-@app.route("/reset")
-def reset() -> str:
-    """
-    Reset data to original state.
-    """
-    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
-    THIS_FOLDER = Path(__file__).parent.resolve()
-    with open(THIS_FOLDER / 'fms-reset.sql', 'r') as f:
-        mqstr: str = f.read()
-        for qstr in mqstr.split(";"):
-            cur.execute(qstr)
-    return redirect(url_for('home'))
-
 @app.get("/mobs")
 def mobs() -> str:
     """
@@ -220,6 +207,21 @@ def move_next_day() -> str:
     cur.execute(update_paddock_statement, [pasture_growth_rate, stock_consumption_rate])
     flash(f"Date moved successfully!", "success")
     return redirect(url_for("paddocks"))
+
+@app.post("/paddocks/reset")
+def reset() -> str:
+    """
+    Reset data to original state.
+    """
+    g.page = "paddocks"
+    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    THIS_FOLDER = Path(__file__).parent.resolve()
+    with open(THIS_FOLDER / 'fms-reset.sql', 'r') as f:
+        mqstr: str = f.read()
+        for qstr in mqstr.split(";"):
+            cur.execute(qstr)
+    flash(f"Date reseted successfully!", "success")
+    return redirect(url_for('paddocks'))
     
 @app.errorhandler(Exception)
 def unknown_error_handler(exp: Exception) -> str:

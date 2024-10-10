@@ -18,16 +18,25 @@
         
         <h4 class="mb-3">Paddock List:</h4>
 
-        <form id="nextDayForm" action="/paddcoks/next_day" method="POST">
-            <button class="btn btn-success mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#table_collapse" aria-expanded="false" aria-controls="table_collapse" onclick="this.innerHTML = this.getAttribute('aria-expanded') === 'false' ? 'Expand Table' : 'Collapse Table'">
+        <div class="d-flex align-items-center mb-3 mt-3">
+            
+            <button class="btn btn-success mb-3 me-1" type="button" data-bs-toggle="collapse" data-bs-target="#table_collapse" aria-expanded="false" aria-controls="table_collapse" onclick="this.innerHTML = this.getAttribute('aria-expanded') === 'false' ? 'Expand Table' : 'Collapse Table'">
                 Collapse Table
             </button>
     
-            <button class="btn btn-success mb-3" type="button" data-bs-toggle="modal" data-bs-target="#add-modal">
+            <button class="btn btn-success mb-3 me-1" type="button" data-bs-toggle="modal" data-bs-target="#add-modal">
                 Add Paddock
             </button>
-            <button class="btn btn-success mb-3" type="submit">Move to Next Day</button>
-        </form>
+
+            <form id="nextDayForm" action="/paddcoks/next_day" method="POST">
+                <button class="btn btn-success mb-3 me-1" type="submit">Move to Next Day</button>
+            </form>
+    
+            <form id="resetDayForm" action="/paddocks/reset" method="POST">
+                <button class="btn btn-danger mb-3 me-1" type="submit">Reset Date</button>
+            </form>
+
+        </div>
         
         <table class="table" style="table-layout: fixed;">
             <thead>
