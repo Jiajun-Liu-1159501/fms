@@ -222,13 +222,13 @@ def unknown_error_handler(exp: Exception) -> str:
     """
     handle global exception, in this case catch base exception only and return the same error page
     """
-    data = {"page": g.page if g.page else "home"}
+    data = {"page": getattr(g, "page", "home")}
     return render_template("error.html", data = data)
 
 class TraceIdFilter(logging.Filter):
 
     def filter(self, record: logging.LogRecord) -> bool:
-        record.trace_id = getattr(g, 'trace_id', 'N/A') # hold the trace_id in logger record
+        record.trace_id = getattr(g, "trace_id", "N/A") # hold the trace_id in logger record
         return True
 
 if __name__ == "__main__":
