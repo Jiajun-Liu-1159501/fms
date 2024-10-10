@@ -1,5 +1,5 @@
 from decimal import ROUND_HALF_UP, Decimal
-from flask import Flask, Response, g
+from flask import Flask, Response, flash, g
 from flask import render_template
 from flask import request
 from flask import redirect
@@ -160,6 +160,7 @@ def add_paddocks() -> str:
     paddock_dh: Decimal = Decimal(request.form.get("paddock_dm"))
     update_statement = "INSERT INTO paddocks (name, area, dm_per_ha, total_dm) VALUES (%s, %s, %s, %s);"
     cur.execute(update_statement, [paddock_name, paddock_area, paddock_dh, (paddock_area * paddock_dh).quantize(Decimal('0.0'), rounding = ROUND_HALF_UP)])
+    flash(f"Paddock added successfully!", "success")
     return redirect(url_for("paddocks"))
 
 @app.post("/paddcoks/edit")
@@ -179,6 +180,7 @@ def edit_paddocks() -> str:
     paddock_dh: Decimal = Decimal(request.form.get("paddock_dm"))
     update_statement = "UPDATE paddocks SET name = %s, area = %s, dm_per_ha = %s, total_dm = %s WHERE id = %s;"
     cur.execute(update_statement, [paddock_name, paddock_area, paddock_dh, (paddock_area * paddock_dh).quantize(Decimal('0.0'), rounding = ROUND_HALF_UP), paddock_id])
+    flash(f"Paddock edited successfully!", "success")
     return redirect(url_for("paddocks"))
 
 @app.post("/paddcoks/move")
@@ -195,6 +197,7 @@ def move_paddocks() -> str:
         raise Exception("invalid paddock id submitted")
     update_statement: str = "UPDATE mobs SET paddock_id = %s WHERE paddock_id = %s;"
     cur.execute(update_statement, params)
+    flash(f"Paddock moved successfully!", "success")
     return redirect(url_for("paddocks"))
 
 @app.post("/paddcoks/next_day")
@@ -215,6 +218,7 @@ def move_next_day() -> str:
     """ # all the values to be updated can be calculated is MySQL server, no need to calculate in memory. 
     # Directly executing this statement only requires one I/O, select first then update need twice.
     cur.execute(update_paddock_statement, [pasture_growth_rate, stock_consumption_rate])
+    flash(f"Date moved successfully!", "success")
     return redirect(url_for("paddocks"))
     
 @app.errorhandler(Exception)
