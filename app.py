@@ -1,5 +1,4 @@
 from decimal import ROUND_HALF_UP, Decimal
-import re
 from flask import Flask, Response, flash, g
 from flask import render_template
 from flask import request
