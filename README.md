@@ -2,7 +2,26 @@
 
 #### Design
 
+There will be 3 main pages in this web application
 
+- mob page: /mobs
+- paddock page: /paddocks
+- stock page: /stocks
+
+Each main page corresponds to a URL using GET method
+
+In the paddock page, there will be 4 functions
+
+- add paddock
+- edit paddock
+- move paddock
+- move to next day
+
+For function add paddock, we don't need to fetch any data form backend server, so use the Modal compnent, when the add button clicked, the Modal window will pop up. Then form submit and cancel this Modal.
+
+For function edit paddock, we need to identity which row is selected for editing, so I decided to build buttons into the table to edit each row. Use `onclick` method to get the selected row and its data, then pop up a Modal window, init the values of the compnents in the Modal. Then form submit of cancel this Modal.
+
+For function move paddock, the most troublesome part is that I need to know whether there is an available paddock. If there is no available paddock, the move operation will not be completed. So I set the entry button to an empty paddock, if there is. In this case， I only need to detect if there is a mob name in this paddock, if not, this paddock is available, the move in button will display. After the Move In button clicked, the form will request a new page using argument `target_id`, this is the target paddock in next step. In the new page, Each row will implicitly contain a `target_id`, which will wrapped in a form. When the move out button clicked, the source paddock is selected, the form will submit `source_id` and `target_id` to the backend server. When the operation is successful, the submit url will redirect to page `paddock`
 
 
 #### Image Source
