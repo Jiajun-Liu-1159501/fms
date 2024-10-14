@@ -1,4 +1,5 @@
 from decimal import ROUND_HALF_UP, Decimal
+import re
 from flask import Flask, Response, flash, g
 from flask import render_template
 from flask import request
@@ -169,6 +170,18 @@ def edit_paddocks() -> str:
     cur.execute(update_statement, [paddock_name, paddock_area, paddock_dh, (paddock_area * paddock_dh).quantize(Decimal('0.0'), rounding = ROUND_HALF_UP), paddock_id])
     flash(f"Paddock edited successfully!", "success")
     return redirect(url_for("paddocks"))
+
+@app.get("/move")
+def move_page() -> str:
+    g.page = "paddocks"
+    target_id: int = request.args.get('target_id', type=int)
+    cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
+    cur.execute("SELECT a.*, b.name as mob_name, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id ORDER BY a.name ASC;")
+    paddocks: List[Dict[str. Any]] = cur.fetchall()
+    for item in paddocks:
+        item.setdefault("target_id", target_id)
+    data: Dict[str, Any] = {"page": g.page, "curr_date": get_date(cur), "paddocks": paddocks}
+    return render_template("move.html", data = data)
 
 @app.post("/paddcoks/move")
 def move_paddocks() -> str:

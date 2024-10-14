@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}FMS Paddocks{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        
+        <div class="d-flex align-items-center mb-3 mt-3">
+            <p>Current location:&nbsp;&nbsp;</p>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a class="text-success" href="{{url_for('home')}}">Home</a></li>
+                <li class="breadcrumb-item"><a class="text-success" href="{{url_for('paddocks')}}">Paddocks</a></li>
+              </ol>
+            </nav>
+        </div>
+        
+        <h4 class="mb-3">Paddock List:</h4>
+
+        <div class="d-flex align-items-center mb-3 mt-3">
+            
+            <button class="btn btn-success mb-3 me-1" type="button" data-bs-toggle="collapse" data-bs-target="#table_collapse" aria-expanded="false" aria-controls="table_collapse" onclick="this.innerHTML = this.getAttribute('aria-expanded') === 'false' ? 'Expand Table' : 'Collapse Table'">
+                Collapse Table
+            </button>
+    
+            <form id="cancelMoveForm" action="/paddocks" method="GET">
+                <button class="btn btn-danger mb-3 me-1" type="submit">Cancel Move</button>
+            </form>
+
+        </div>
+        
+        <table class="table" style="table-layout: fixed;">
+            <thead>
+                <tr>
+                    <th scope="col" style="display: none;">Target ID</th>
+                    <th scope="col" style="width: 12%;">Paddock ID</th>
+                    <th scope="col" style="width: 12%;">Paddock Name↑</th>
+                    <th scope="col" style="width: 12%;">Area (HA)</th>
+                    <th scope="col" style="width: 12%;">DM/HA (KG/HA)</th>
+                    <th scope="col" style="width: 12%;">Total DM (KG)</th>
+                    <th scope="col" style="width: 12%;">Mob Name</th>
+                    <th scope="col" style="width: 12%;">Total Stock</th>
+                    <th scope="col">Options</th>
+                </tr>
+            </thead>
+            <tbody class="collapse show", id="table_collapse">
+            {% for paddock in data['paddocks'] %}
+                {% if paddock['dm_per_ha'] < 1500 %}  
+                    <tr class="table-danger">
+                {% elif paddock['dm_per_ha'] < 1800 %}
+                    <tr class="table-warning">
+                {% else %}
+                    <tr>
+                {% endif %}
+                        <form action="/paddcoks/move" method="POST">
+                            <td scope="row" style="display: none;"><input type="hidden" name="target_id" value="{{paddock['target_id']}}"></td>
+                            <td scope="row"><input type="hidden" name="source_id" value="{{paddock['id']}}">{{paddock['id']}}</td>  
+                            <td scope="row">{{paddock['name']}}</td>
+                            <td scope="row">{{paddock['area']}}</td>
+                            <td scope="row" >{{paddock['dm_per_ha']}}</td>
+                            <td scope="row">{{paddock['total_dm']}}</td>
+                            <td scope="row">{{paddock['mob_name'] if paddock['mob_name'] else ''}}</td>   
+                            <td scope="row">{{paddock['sotck_num']}}</td>
+                            <td scope="row" class="bg-transparent">
+                                <button type="submit" class="btn btn-info {{'' if paddock['mob_name'] else 'd-none'}}">Move Out</button>
+                            </td>
+                        </form>
+                    </tr>
+            {% endfor %}
+            </tbody>    
+        </table>
+
+    </div>
+
+{% endblock %}
