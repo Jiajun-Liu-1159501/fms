@@ -69,7 +69,7 @@
                             <td scope="row">{{paddock['mob_name'] if paddock['mob_name'] else ''}}</td>   
                             <td scope="row">{{paddock['sotck_num']}}</td>
                             <td scope="row" class="bg-transparent">
-                                <button type="button" class="btn btn-warning edit_button" onclick="const row = this.closest('tr'); ['edit-id-input','edit-name-input','edit-area-input-text','edit-area-input-range','edit-dm-input-text','edit-dm-input-range'].forEach((id, idx) => document.getElementById(id).value = row.cells[Math.floor(idx / 2)].innerText); new bootstrap.Modal(document.getElementById('edit-modal')).show();">
+                                <button type="button" class="btn btn-warning edit_button" onclick="const row = this.closest('tr');document.getElementById('edit-id-input').value=row.cells[0].innerText;document.getElementById('edit-name-input').value = row.cells[1].innerText;document.getElementById('edit-area-input-text').value = row.cells[2].innerText;document.getElementById('edit-area-input-range').value = row.cells[2].innerText;document.getElementById('edit-dm-input-text').value = row.cells[3].innerText;document.getElementById('edit-dm-input-range').value = row.cells[3].innerText;new bootstrap.Modal(document.getElementById('edit-modal')).show();">
                                     Edit
                                 </button>
                                 <button type="submit" class="btn btn-info move_in_button {{'d-none' if paddock['mob_name'] else ''}}">Move In</button>
@@ -254,6 +254,20 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            function handle_edit(button) {
+                const row = button.closest('tr');
+                document.getElementById('edit-id-input').value = row.cells[0].innerText;
+                document.getElementById('edit-name-input').value = row.cells[1].innerText;
+                document.getElementById('edit-area-input-text').value = row.cells[2].innerText;
+                document.getElementById('edit-area-input-range').value = row.cells[2].innerText;
+                document.getElementById('edit-dm-input-text').value = row.cells[3].innerText;
+                document.getElementById('edit-dm-input-range').value = row.cells[3].innerText;
+                const modal = new bootstrap.Modal(document.getElementById('edit-modal'));
+                modal.show();
+            }
+        </script>
 
     </div>
 
