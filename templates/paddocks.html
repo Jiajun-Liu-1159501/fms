@@ -255,20 +255,6 @@
             </div>
         </div>
 
-        <script>
-            function handle_edit(button) {
-                const row = button.closest('tr');
-                document.getElementById('edit-id-input').value = row.cells[0].innerText;
-                document.getElementById('edit-name-input').value = row.cells[1].innerText;
-                document.getElementById('edit-area-input-text').value = row.cells[2].innerText;
-                document.getElementById('edit-area-input-range').value = row.cells[2].innerText;
-                document.getElementById('edit-dm-input-text').value = row.cells[3].innerText;
-                document.getElementById('edit-dm-input-range').value = row.cells[3].innerText;
-                const modal = new bootstrap.Modal(document.getElementById('edit-modal'));
-                modal.show();
-            }
-        </script>
-
     </div>
 
 {% endblock %}
