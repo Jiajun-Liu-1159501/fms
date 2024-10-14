@@ -63,6 +63,9 @@
                             <td scope="row">{{paddock['mob_name'] if paddock['mob_name'] else ''}}</td>   
                             <td scope="row">{{paddock['sotck_num']}}</td>
                             <td scope="row" class="bg-transparent">
+                                {% if paddock['id'] == paddock['target_id'] %}
+                                    <button type="button" class="btn btn-danger" disabled>Selected for Move In</button>
+                                {% endif %}
                                 <button type="submit" class="btn btn-info {{'' if paddock['mob_name'] else 'd-none'}}">Move Out</button>
                             </td>
                         </form>

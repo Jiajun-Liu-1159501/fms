@@ -60,19 +60,21 @@
                 {% else %}
                     <tr>
                 {% endif %}
-                        <td scope="row">{{paddock['id']}}</td>  
-                        <td scope="row">{{paddock['name']}}</td>
-                        <td scope="row">{{paddock['area']}}</td>
-                        <td scope="row" >{{paddock['dm_per_ha']}}</td>
-                        <td scope="row">{{paddock['total_dm']}}</td>
-                        <td scope="row">{{paddock['mob_name'] if paddock['mob_name'] else ''}}</td>   
-                        <td scope="row">{{paddock['sotck_num']}}</td>
-                        <td scope="row" class="bg-transparent">
-                            <button type="button" class="btn btn-warning edit_button" onclick="handle_edit(this)">Edit</button>
-                            <button type="button" class="btn btn-info move_in_button {{'d-none' if paddock['mob_name'] else ''}}" data-can-move-in="{{'false' if paddock['mob_name'] else 'true'}}" onclick="handle_move_in(this)">Move In</button>
-                            <button type="button" class="btn btn-danger d-none" onclick="cancel_move(this)">Cancel Move</button>
-                            <button type="button" class="btn btn-info d-none move_out_button" data-can-move-out="{{'true' if paddock['mob_name'] else 'false'}}" onclick="handle_move_out(this)">Move Out</button>
-                        </td>
+                        <form action="/move" method="GET">
+                            <td scope="row"><input type="hidden" name="target_id" value="{{paddock['id']}}">{{paddock['id']}}</td>  
+                            <td scope="row">{{paddock['name']}}</td>
+                            <td scope="row">{{paddock['area']}}</td>
+                            <td scope="row" >{{paddock['dm_per_ha']}}</td>
+                            <td scope="row">{{paddock['total_dm']}}</td>
+                            <td scope="row">{{paddock['mob_name'] if paddock['mob_name'] else ''}}</td>   
+                            <td scope="row">{{paddock['sotck_num']}}</td>
+                            <td scope="row" class="bg-transparent">
+                                <button type="button" class="btn btn-warning edit_button" onclick="const row = this.closest('tr'); ['edit-id-input','edit-name-input','edit-area-input-text','edit-area-input-range','edit-dm-input-text','edit-dm-input-range'].forEach((id, idx) => document.getElementById(id).value = row.cells[Math.floor(idx / 2)].innerText); new bootstrap.Modal(document.getElementById('edit-modal')).show();">
+                                    Edit
+                                </button>
+                                <button type="submit" class="btn btn-info move_in_button {{'d-none' if paddock['mob_name'] else ''}}">Move In</button>
+                            </td>
+                        </form>
                     </tr>
             {% endfor %}
 
@@ -252,92 +254,6 @@
                 </div>
             </div>
         </div>
-
-        <script>
-
-            let selectedRows = new Map();
-            let target_row = null;
-
-            function handle_move_in(button) {
-                const row = button.closest('tr');
-                const buttons = row.querySelectorAll('button');
-                document.querySelectorAll('.edit_button').forEach(btn => btn.disabled = true);    //disable all edit button
-                document.querySelectorAll('.move_in_button').forEach(btn => btn.classList.add('d-none'))
-                buttons[2].classList.remove('d-none');     //show move cancel button
-                document.querySelectorAll('.move_out_button').forEach(btn => {
-                    if (btn.getAttribute('data-can-move-out') == 'true') {
-                        btn.classList.remove('d-none');
-                    }
-                })
-                selectedRows.set('in', build_data_map(row));
-                target_row = row;
-            }
-
-            function handle_move_out(button) {
-                const row = button.closest('tr');
-                selectedRows.set('out', build_data_map(row));
-                
-                document.getElementById('out-paddock-name').innerText = selectedRows.get('out').get('paddock_name');
-                document.getElementById('out-paddock-id').value = selectedRows.get('out').get('paddock_id')
-                document.getElementById('out-paddock-area').innerText = selectedRows.get('out').get('paddock_area');
-                document.getElementById('out-paddock-total').innerText = selectedRows.get('out').get('paddock_total');
-                document.getElementById('out-mob-name').innerText = selectedRows.get('out').get('mob_name');
-                document.getElementById('out-stocks').innerText = selectedRows.get('out').get('mob_stock');
-
-                document.getElementById('in-paddock-name').innerText = selectedRows.get('in').get('paddock_name');
-                document.getElementById('in-paddock-id').value = selectedRows.get('in').get('paddock_id');
-                document.getElementById('in-paddock-area').innerText = selectedRows.get('in').get('paddock_area');
-                document.getElementById('in-paddock-total').innerText = selectedRows.get('in').get('paddock_total');
-
-                const modal = new bootstrap.Modal(document.getElementById('move-modal'));
-                modal.show();
-                reset_buttons(target_row);
-            }
-
-            function cancel_move(button) {
-                reset_buttons(target_row)
-                selectedRows = new Map();
-            }
-
-            function reset_buttons(row) {
-                const buttons = row.querySelectorAll('button');
-                document.querySelectorAll('.edit_button').forEach(btn => btn.disabled = false)    //enable all edit button
-                document.querySelectorAll('.move_in_button').forEach(btn => {
-                    if (btn.getAttribute('data-can-move-in') == 'true')
-                        btn.classList.remove('d-none');
-                });
-                buttons[2].classList.add('d-none');     //show move cancel button
-                document.querySelectorAll('.move_out_button').forEach(btn => {
-                    if (btn.getAttribute('data-can-move-out') == 'true') {
-                        btn.classList.add('d-none');
-                    }
-                });
-            }
-
-            function build_data_map(row) {
-                let target_map = new Map();
-                target_map.set('paddock_id', row.cells[0].innerText);
-                target_map.set('paddock_name', row.cells[1].innerText);
-                target_map.set('paddock_area', row.cells[2].innerText);
-                target_map.set('paddock_total', row.cells[4].innerText);
-                target_map.set('mob_name', row.cells[5].innerText);
-                target_map.set('mob_stock', row.cells[6].innerText);
-                return target_map;
-            }
-
-            function handle_edit(button) {
-                const row = button.closest('tr');
-                document.getElementById('edit-id-input').value = row.cells[0].innerText;
-                document.getElementById('edit-name-input').value = row.cells[1].innerText;
-                document.getElementById('edit-area-input-text').value = row.cells[2].innerText;
-                document.getElementById('edit-area-input-range').value = row.cells[2].innerText;
-                document.getElementById('edit-dm-input-text').value = row.cells[3].innerText;
-                document.getElementById('edit-dm-input-range').value = row.cells[3].innerText;
-                const modal = new bootstrap.Modal(document.getElementById('edit-modal'));
-                modal.show();
-            }
-
-        </script>
 
     </div>
 
