@@ -41,13 +41,13 @@
         <table class="table" style="table-layout: fixed;">
             <thead>
                 <tr>
-                    <th scope="col" style="width: 12%;">Paddock ID</th>
-                    <th scope="col" style="width: 12%;">Paddock Name↑</th>
-                    <th scope="col" style="width: 12%;">Area (HA)</th>
-                    <th scope="col" style="width: 12%;">DM/HA (KG/HA)</th>
-                    <th scope="col" style="width: 12%;">Total DM (KG)</th>
-                    <th scope="col" style="width: 12%;">Mob Name</th>
-                    <th scope="col" style="width: 12%;">Total Stock</th>
+                    <th scope="col" style="display: none;">Paddock ID</th>
+                    <th scope="col" style="width: 14%;">Paddock Name↑</th>
+                    <th scope="col" style="width: 14%;">Area (HA)</th>
+                    <th scope="col" style="width: 14%;">DM/HA (KG/HA)</th>
+                    <th scope="col" style="width: 14%;">Total DM (KG)</th>
+                    <th scope="col" style="width: 14%;">Mob Name</th>
+                    <th scope="col" style="width: 14%;">Total Stock</th>
                     <th scope="col">Options</th>
                 </tr>
             </thead>
@@ -61,7 +61,7 @@
                     <tr>
                 {% endif %}
                         <form action="/move" method="GET">
-                            <td scope="row"><input type="hidden" name="target_id" value="{{paddock['id']}}">{{paddock['id']}}</td>  
+                            <td scope="row" style="display: none;"><input type="hidden" name="target_id" value="{{paddock['id']}}">{{paddock['id']}}</td>  
                             <td scope="row">{{paddock['name']}}</td>
                             <td scope="row">{{paddock['area']}}</td>
                             <td scope="row" >{{paddock['dm_per_ha']}}</td>
@@ -156,7 +156,7 @@
                             <div class="mb-3 row align-items-center">
                                 <label for="edit-area-input-text" class="col-sm-4 col-form-label text-success">Paddock Area (HA)</label>
                                 <div class="col-sm-8">
-                                    <input type="text" required class="form-control" id="edit-area-input-text" name="paddock_area" pattern="^([1-9]\d*)(\.\d{1,2})?$|^([1-9]\d*|0)\.\d{1,2}$" oninput="document.getElementById('edit-area-input-range').value = this.value">
+                                    <input type="text" required class="form-control" id="edit-area-input-text" name="paddock_area" pattern="^(?!0+(\.0{1,2})?$)([1-9]\d*)(\.\d{1,2})?$|^(?!0+(\.0{1,2})?$)([1-9]\d*|0)\.\d{1,2}$" oninput="document.getElementById('edit-area-input-range').value = this.value">
                                 </div>
                             </div>
                             <div class="mb-3 row align-items-center">
@@ -173,7 +173,7 @@
                             <div class="mb-3 row align-items-center">
                                 <label for="edit-dm-input-text" class="col-sm-4 col-form-label text-success">DM / HA (KG/HA)</label>
                                 <div class="col-sm-8">
-                                    <input type="text" required class="form-control" id="edit-dm-input-text" name="paddock_dm" pattern="^([1-9]\d*)(\.\d{1,2})?$|^([1-9]\d*|0)\.\d{1,2}$" oninput="document.getElementById('edit-dm-input-range').value = this.value">
+                                    <input type="text" required class="form-control" id="edit-dm-input-text" name="paddock_dm" pattern="^(?!0+(\.0{1,2})?$)([1-9]\d*)(\.\d{1,2})?$|^(?!0+(\.0{1,2})?$)([1-9]\d*|0)\.\d{1,2}$" oninput="document.getElementById('edit-dm-input-range').value = this.value">
                                 </div>
                             </div>
                             <div class="mb-3 row align-items-center">
@@ -214,7 +214,7 @@
                             <div class="mb-3 row align-items-center">
                                 <label for="add-area-input-text" class="col-sm-4 col-form-label text-success">Paddock Area (HA)</label>
                                 <div class="col-sm-8">
-                                    <input type="text" required class="form-control" id="add-area-input-text" value="0" placeholder="Enter value or drag slider below" name="paddock_area" pattern="^([1-9]\d*)(\.\d{1,2})?$|^([1-9]\d*|0)\.\d{1,2}$" oninput="document.getElementById('add-area-input-range').value = this.value">
+                                    <input type="text" required class="form-control" id="add-area-input-text" value="0" placeholder="Enter value or drag slider below" name="paddock_area" pattern="^(?!0+(\.0{1,2})?$)([1-9]\d*)(\.\d{1,2})?$|^(?!0+(\.0{1,2})?$)([1-9]\d*|0)\.\d{1,2}$" oninput="document.getElementById('add-area-input-range').value = this.value">
                                 </div>
                             </div>
                             <div class="mb-3 row align-items-center">
@@ -231,7 +231,7 @@
                             <div class="mb-3 row align-items-center">
                                 <label for="add-dm-input-text" class="col-sm-4 col-form-label text-success">DM / HA (KG/HA)</label>
                                 <div class="col-sm-8">
-                                    <input type="text" required class="form-control" id="add-dm-input-text" placeholder="Enter value or drag slider below" name="paddock_dm" value="0" pattern="^([1-9]\d*)(\.\d{1,2})?$|^([1-9]\d*|0)\.\d{1,2}$" oninput="document.getElementById('add-dm-input-range').value = this.value">
+                                    <input type="text" required class="form-control" id="add-dm-input-text" placeholder="Enter value or drag slider below" name="paddock_dm" value="0" pattern="^(?!0+(\.0{1,2})?$)([1-9]\d*)(\.\d{1,2})?$|^(?!0+(\.0{1,2})?$)([1-9]\d*|0)\.\d{1,2}$" oninput="document.getElementById('add-dm-input-range').value = this.value">
                                 </div>
                             </div>
                             <div class="mb-3 row align-items-center">

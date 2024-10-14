@@ -25,7 +25,7 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col">Mob ID</th>
+                    <th scope="col" style="display: none;">Mob ID</th>
                     <th scope="col">Mob Name↑</th>
                     <th scope="col">Paddock Name</th>
                     <th scope="col">Options</th>
@@ -34,7 +34,7 @@
             <tbody class="collapse show", id="table_collapse">
                 {% for mob in data['mobs'] %}  
                     <tr>
-                        <td scope="row">{{mob['id']}}</td>  
+                        <td scope="row" style="display: none;">{{mob['id']}}</td>  
                         <td scope="row">{{mob['mob_name']}}</td>
                         <td scope="row">{{mob['paddock_name']}}</td>
                         <td scope="row">

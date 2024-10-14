@@ -34,13 +34,13 @@
             <thead>
                 <tr>
                     <th scope="col" style="display: none;">Target ID</th>
-                    <th scope="col" style="width: 12%;">Paddock ID</th>
-                    <th scope="col" style="width: 12%;">Paddock Name↑</th>
-                    <th scope="col" style="width: 12%;">Area (HA)</th>
-                    <th scope="col" style="width: 12%;">DM/HA (KG/HA)</th>
-                    <th scope="col" style="width: 12%;">Total DM (KG)</th>
-                    <th scope="col" style="width: 12%;">Mob Name</th>
-                    <th scope="col" style="width: 12%;">Total Stock</th>
+                    <th scope="col" style="display: none;">Paddock ID</th>
+                    <th scope="col" style="width: 14%;">Paddock Name↑</th>
+                    <th scope="col" style="width: 14%;">Area (HA)</th>
+                    <th scope="col" style="width: 14%;">DM/HA (KG/HA)</th>
+                    <th scope="col" style="width: 14%;">Total DM (KG)</th>
+                    <th scope="col" style="width: 14%;">Mob Name</th>
+                    <th scope="col" style="width: 14%;">Total Stock</th>
                     <th scope="col">Options</th>
                 </tr>
             </thead>
@@ -55,7 +55,7 @@
                 {% endif %}
                         <form action="/paddcoks/move" method="POST">
                             <td scope="row" style="display: none;"><input type="hidden" name="target_id" value="{{paddock['target_id']}}"></td>
-                            <td scope="row"><input type="hidden" name="source_id" value="{{paddock['id']}}">{{paddock['id']}}</td>  
+                            <td scope="row" style="display: none;"><input type="hidden" name="source_id" value="{{paddock['id']}}">{{paddock['id']}}</td>  
                             <td scope="row">{{paddock['name']}}</td>
                             <td scope="row">{{paddock['area']}}</td>
                             <td scope="row" >{{paddock['dm_per_ha']}}</td>
