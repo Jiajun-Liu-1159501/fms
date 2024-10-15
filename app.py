@@ -130,8 +130,7 @@ def paddocks() -> str:
     """
     g.page = "paddocks"
     cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
-    cur.execute("SELECT a.*, b.name as mob_name, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id ORDER BY a.name ASC;")
-    paddocks: List[Dict[str. Any]] = cur.fetchall()
+    paddocks: List[Dict[str. Any]] = _fetch_paddock_list(cur)
     data: Dict[str, Any] = {"page": g.page, "curr_date": get_date(cur), "paddocks": paddocks}
     return render_template("paddocks.html", data = data)
 
@@ -175,12 +174,18 @@ def move_page() -> str:
     g.page = "paddocks"
     target_id: int = request.args.get('target_id', type=int)
     cur: cursor.MySQLCursor = g.db_connection.cursor(dictionary = True, buffered = False)
-    cur.execute("SELECT a.*, b.name as mob_name, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id ORDER BY a.name ASC;")
-    paddocks: List[Dict[str. Any]] = cur.fetchall()
+    paddocks: List[Dict[str. Any]] = _fetch_paddock_list(cur)
     for item in paddocks:
         item.setdefault("target_id", target_id)
     data: Dict[str, Any] = {"page": g.page, "curr_date": get_date(cur), "paddocks": paddocks}
     return render_template("move.html", data = data)
+
+def _fetch_paddock_list(cur: cursor.MySQLCursor) -> List[Dict[str, Any]]:
+    """
+    Both move page and paddock page will use this SQL query, so make fetch_paddock_list as a private method
+    """
+    cur.execute("SELECT a.*, b.name as mob_name, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id ORDER BY a.name ASC;")
+    return cur.fetchall()
 
 @app.post("/paddcoks/move")
 def move_paddocks() -> str:
@@ -194,6 +199,10 @@ def move_paddocks() -> str:
     cur.execute(paddock_valid_query, params)
     if cur.fetchone()['count'] != 2:    
         raise Exception("invalid paddock id submitted")
+    paddock_empty_query: str = "SELECT COUNT(1) as count FROM mobs WHERE paddock_id = %s;"   # check target paddock is empty
+    cur.execute(paddock_empty_query, [params[0]])
+    if cur.fetchone()['count'] > 0:
+        raise Exception("this paddock is not empty")
     update_statement: str = "UPDATE mobs SET paddock_id = %s WHERE paddock_id = %s;"
     cur.execute(update_statement, params)
     flash(f"Paddock moved successfully!", "success")
@@ -240,6 +249,7 @@ def unknown_error_handler(exp: Exception) -> str:
     """
     handle global exception, in this case catch base exception only and return the same error page
     """
+    app.logger.error(f"Error : {exp}")
     data = {"page": getattr(g, "page", "home")}
     return render_template("error.html", data = data)
 
