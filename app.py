@@ -219,10 +219,10 @@ def move_next_day() -> str:
     cur.execute(update_date_statement)
     update_paddock_statement: str = """ 
         UPDATE paddocks e JOIN (
-	        SELECT d.paddock_id as paddock_id, d.total_dm as total_dm, ROUND(d.paddock_area * %s - d.sotck_num * %s, 2) as consumption FROM (
-		        SELECT a.id as paddock_id, a.area as paddock_area, a.total_dm as total_dm, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id
+	        SELECT d.paddock_id as paddock_id, ROUND(d.paddock_area * %s - d.sotck_num * %s, 2) as consumption FROM (
+		        SELECT a.id as paddock_id, a.area as paddock_area, COUNT(c.id) as sotck_num FROM paddocks a LEFT JOIN mobs b ON a.id = b.paddock_id LEFT JOIN stock c ON c.mob_id = b.id GROUP BY a.id
 	        ) as d
-        ) as f ON e.id = f.paddock_id SET e.total_dm = f.total_dm + f.consumption, e.dm_per_ha = ROUND((f.total_dm + f.consumption) / e.area, 2);
+        ) as f ON e.id = f.paddock_id SET e.dm_per_ha = ROUND((e.total_dm + f.consumption) / e.area, 2), e.total_dm = e.total_dm + f.consumption;
     """ # all the values to be updated can be calculated is MySQL server, no need to calculate in memory. 
     # Directly executing this statement only requires one I/O, select first then update need twice.
     cur.execute(update_paddock_statement, [pasture_growth_rate, stock_consumption_rate])
