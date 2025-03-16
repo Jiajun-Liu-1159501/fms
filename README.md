@@ -2,13 +2,15 @@
 
 #### Design
 
-There will be 3 main pages in this web application
+First of all, I tried to rewirte the method of acquire a db connection, using a connection pool instead. The connection limits the max database connections that the web applicaton can acquire. Each request thread will try to obtain a connection from a blocking queue, if the queue is empty(all connections in connection pool are in use), the request thread will wait until other thread returns a conection to the pool.
+
+Next, there will be 3 main pages in this web application:
 
 - mob page: /mobs
 - paddock page: /paddocks
 - stock page: /stocks
 
-Each main page corresponds to a URL using GET method
+Each main page corresponds to a URL using GET method. No more functions in page `mob` and `stock`, just select their data from database using join statement, very easy.
 
 In the paddock page, there will be 4 functions
 
@@ -17,11 +19,13 @@ In the paddock page, there will be 4 functions
 - move paddock
 - move to next day
 
-For the function add paddock, we don't need to fetch any data form backend server, so use the Modal compnent, when the add button clicked, the Modal window will pop up. Then form submit and cancel this Modal.
+For the function `add paddock`, we don't need to fetch any data form backend server, so use the Modal compnent, when the add button clicked, the Modal window will pop up. Then the form will submit using http POST, or cancel this Modal.
 
-For the function edit paddock, we need to identity which row is selected for editing, so I decided to build buttons into the table to edit each row. Use `onclick` method to get the selected row and its data, then pop up a Modal window, init the values of the compnents in the Modal. Then form submit of cancel this Modal.
+For the function `edit paddock`, we need to identity which row is selected for editing, so I decided to build buttons into the table to edit each row. Use `onclick` method to get the selected row and its data, then pop up a Modal window, init the values of the compnents in the Modal. Then the form. will submit using http POST, or cancel this Modal.
 
-For the function move paddock, the most troublesome part is that I need to know whether there is an available paddock. If there is no available paddock, the move operation will not be completed. So I set the entry button to an empty paddock, if there is one. In this case， I only need to detect if there is a mob name in this paddock, if not, this paddock is available, the move-in button will display. After the Move-In button is clicked, the form will request a new page using argument `target_id`, this is the target paddock in the next step. In the new page, Each row will implicitly contain a `target_id`, which will wrapped in a form. When the move-out button is clicked, the source paddock is selected, the form will submit `source_id` and `target_id` to the backend server. When the operation is successful, the submit URL will redirect to page `paddock`.
+For the function `move paddock`, the most troublesome part is that I need to know whether there is an available paddock. If there is no available paddock, the move operation will not be completed. So I set the entry button to an empty paddock, if there is one. In this case， I only need to detect if there is a mob name in this paddock, if not, this paddock is available, the move-in button will display. After the Move-In button is clicked, the form will request a new page using argument `target_id`, this is the target paddock in the next step. In the new page, Each row will implicitly contain a `target_id`, which will wrapped in a form. When the move-out button is clicked, the source paddock is selected, the form will submit `source_id` and `target_id` to the backend server. When the operation is successful, the submit URL will redirect to page `paddock`.
+
+For the function `move to next day`, in normal way, we need to update the date first, this needs one I/O to database, then query all the paddocks with their stock number into VM heap, one more I/O needed, finally recalculate the consumption of each paddock and update the new values into database, this step need at least antoher one I/O(depends on using batch operation or not). Therefore at least 3 I/O are needed in normal way. However, if I pass the consumption rate as an argument of a sql statement, then calculate the new values in MySQL using two temp tables, we can merge the last twice I/O, therefore only 2 I/O are needed if I calculate them in database.
 
 
 #### Image Source
