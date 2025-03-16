@@ -268,5 +268,5 @@ if __name__ == "__main__":
     handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: [Trace ID: %(trace_id)s] %(message)s'))
     handler.addFilter(TraceIdFilter())
     app.logger.addHandler(handler)  # add customer logger with trace_id pre request
-    app.logger.setLevel(logging.DEBUG)  # set logger level to debug
+    app.logger.setLevel(logging.DEBUG)
     app.run()
